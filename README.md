@@ -15,8 +15,8 @@ npm install skylark-langx --save
 - bower  
 bower install skylark-langx
 - cdn  
-http://registry.skylarkjs.org/packages/skylark-utils/v0.9.0/skylark-langx.js    or  
-http://registry.skylarkjs.org/packages/skylark-utils/v0.9.0/uncompressed/skylark-langx.js 
+http://registry.skylarkjs.org/packages/skylark-utils/v0.9.1/skylark-langx.js    or  
+http://registry.skylarkjs.org/packages/skylark-utils/v0.9.1/uncompressed/skylark-langx.js 
 
 ## Usage
 
@@ -24,7 +24,7 @@ http://registry.skylarkjs.org/packages/skylark-utils/v0.9.0/uncompressed/skylark
 ```js
 require({
   'paths': {
-     'skylark-langx': 'http://registry.skylarkjs.org/packages/skylark-langx/v0.9.0/skylark-langx' 
+     'skylark-langx': 'http://registry.skylarkjs.org/packages/skylark-langx/v0.9.1/skylark-langx' 
   }
 }, ['skylark-langx'], function(slangx) {
   // slangx.isArrayLike(a) 
@@ -33,7 +33,7 @@ require({
 
 - Using the skylark-langx library for a global object named skylarkjs.  
 ```js
-<script type="text/javascript" src="http://registry.skylarkjs.org/packages/skylark-langx/v0.9.0/skylark-langx.js"></script>
+<script type="text/javascript" src="http://registry.skylarkjs.org/packages/skylark-langx/v0.9.1/skylark-langx.js"></script>
 <script>
 // skylarkjs.langx.isArrayLike(a);
 </script>
@@ -43,7 +43,7 @@ require({
 ```js
 require({
   'packages': [
-    { 'name': 'skylark-langx', 'location': 'http://registry.skylarkjs.org/packages/skylark-langx/v0.9.0/skylark-langx/' }
+    { 'name': 'skylark-langx', 'location': 'http://registry.skylarkjs.org/packages/skylark-langx/v0.9.1/skylark-langx/' }
   ]
 }, ['skylark-langx/langx'], function(slangx) {
   // slangx.isArrayLike(a);
