@@ -927,7 +927,9 @@ define(["./skylark"], function(skylark) {
 
         upperFirst: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
-        }
+        },
+
+        URL: window.URL || window.webkitURL
 
     });
 
