@@ -96,6 +96,30 @@ define(["./skylark"], function(skylark) {
     })();
 
 
+   function clone( /*anything*/ src) {
+        var copy;
+        if (src === undefined || src === null) {
+            copy =  src;
+        } else if (src.clone){
+            copy = src.clone();
+        } else if (isArray(src)) {
+            copy = [];
+            for (var i = 0;i<src.length;i++) {
+                copy.push(clone(src[i]));
+            }
+        } else if (isPlainObject(src)){
+            copy = {};
+            for (var key in src){
+                copy[key] = clone(src[key]);
+            } 
+        } else {
+            copy = src;
+        }
+
+        return copy;
+
+    }
+
     function debounce(fn, wait) {
         var timeout,
             args,
@@ -109,6 +133,21 @@ define(["./skylark"], function(skylark) {
             timeout = setTimeout(later, wait);
         };
     }
+
+    var delegate = (function(){
+            // boodman/crockford delegation w/ cornford optimization
+            function TMP(){}
+            return function(obj, props){
+                TMP.prototype = obj;
+                var tmp = new TMP();
+                TMP.prototype = null;
+                if(props){
+                    mixin(tmp, props);
+                }
+                return tmp; // Object
+            };
+    })();
+
 
     var Deferred = function() {
         this.promise = new Promise(function(resolve, reject) {
@@ -832,12 +871,15 @@ define(["./skylark"], function(skylark) {
                 return a.toUpperCase().replace('-', '');
             });
         },
+        clone: clone,
 
         compact: compact,
 
         dasherize: dasherize,
 
         debounce: debounce,
+
+        delegate: delegate,
 
         Deferred: Deferred,
 
