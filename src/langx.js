@@ -955,6 +955,10 @@ define(["./skylark"], function(skylark) {
 
         safeMixin: safeMixin,
 
+        serializeValue : function(value) {
+            return JSON.stringify(value)
+        },
+
         substitute: substitute,
 
         toPixel: toPixel,
