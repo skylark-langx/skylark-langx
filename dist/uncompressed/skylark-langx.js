@@ -660,17 +660,17 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         var i;
 
         if (array.indexOf) {
-            return array.indexOf(item);
+            return array.indexOf(item) > -1;
         }
 
         i = array.length;
         while (i--) {
             if (array[i] === item) {
-                return i;
+                return true;
             }
         }
 
-        return -1;
+        return false;
     }
 
     function inherit(ctor, base) {
@@ -718,6 +718,10 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
 
     function isDefined(obj) {
         return typeof obj !== 'undefined';
+    }
+
+    function isHtmlNode(obj) {
+        return obj && (obj instanceof Node);
     }
 
     function isNumber(obj) {
@@ -1003,6 +1007,8 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         isEmptyObject: isEmptyObject,
 
         isFunction: isFunction,
+
+        isHtmlNode : isHtmlNode,
 
         isObject: isObject,
 
