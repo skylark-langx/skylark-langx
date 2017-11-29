@@ -1,7 +1,7 @@
 /**
  * skylark-langx - A simple JavaScript language extension library, including class support, Evented class, Deferred class and some commonly used tool functions.
  * @author Hudaokeji Co.,Ltd
- * @version v0.9.3
+ * @version v0.9.5-beta
  * @link www.skylarkjs.org
  * @license MIT
  */
@@ -681,7 +681,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
     }
 
     function isArray(object) {
-        return object instanceof Array;
+        return object && object.constructor === Array;
     }
 
     function isArrayLike(obj) {

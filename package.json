@@ -1,6 +1,6 @@
 {
   "name": "skylark-langx",
-  "version": "0.9.4",
+  "version": "0.9.5-beta",
   "description": "A simple JavaScript language extension library, including class support, Evented class, Deferred class and some commonly used tool functions.",
   "main": "-",
   "scripts": {

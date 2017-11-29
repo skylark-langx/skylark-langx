@@ -590,7 +590,7 @@ define(["./skylark"], function(skylark) {
     }
 
     function isArray(object) {
-        return object instanceof Array;
+        return object && object.constructor === Array;
     }
 
     function isArrayLike(obj) {
