@@ -593,7 +593,7 @@ define(["./skylark"], function(skylark) {
     }
 
     function isArrayLike(obj) {
-        return !isString(obj) && !(obj.nodeName && obj.nodeName == "#text") && typeof obj.length == 'number';
+        return !isString(obj) && !isHtmlNode(obj) && typeof obj.length == 'number';
     }
 
     function isBoolean(obj) {
