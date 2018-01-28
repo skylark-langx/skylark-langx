@@ -774,17 +774,17 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         var i;
 
         if (array.indexOf) {
-            return array.indexOf(item) > -1;
+            return array.indexOf(item);
         }
 
         i = array.length;
         while (i--) {
             if (array[i] === item) {
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     function inherit(ctor, base) {
