@@ -254,7 +254,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
             if (_constructor === Object) {
                 _constructor = function() {
                     if (this.init) {
-                        this.init.apply(this, arguments);
+                        return this.init.apply(this, arguments);
                     }
                 };
             };
@@ -267,8 +267,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
                     "if (!(inst instanceof ctor)) {" +
                     "inst = Object.create(ctor.prototype);" +
                     "}" +
-                    "ctor._constructor.apply(inst, arguments);" +
-                    "return inst;" +
+                    "return ctor._constructor.apply(inst, arguments) || inst;" + 
                     "}"
                 )();
             ctor._constructor = _constructor;
