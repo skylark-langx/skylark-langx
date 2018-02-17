@@ -357,19 +357,56 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         };
     })();
 
+    var  PGLISTENERS = Symbol ? Symbol() : '__pglisteners';
 
     var Deferred = function() {
-        this.promise = new Promise(function(resolve, reject) {
-            this._resolve = resolve;
-            this._reject = reject;
-        }.bind(this));
+        var self = this,
+            p = this.promise = new Promise(function(resolve, reject) {
+                self._resolve = resolve;
+                self._reject = reject;
+            });
+
+        mixin(p,{
+            then : function(onResolved,onRejected,onProgress) {
+                if (onProgress) {
+                    this.progress(onProgress);
+                }
+                return Promise.prototype.then.call(this,onResolved,onRejected);
+            },
+            done : function(handler) {
+                return Promise.prototype.then.call(this,handler);
+            },
+            fail : function(handler) { 
+                return Promise.prototype.catch.call(this,handler);
+            }, 
+            progress : function(handler) {
+                self[PGLISTENERS].push(handler);
+                return this;
+            }
+
+        });
+
+        this[PGLISTENERS] = [];
 
         this.resolve = Deferred.prototype.resolve.bind(this);
         this.reject = Deferred.prototype.reject.bind(this);
+        this.progress = Deferred.prototype.progress.bind(this);
+
     };
 
     Deferred.prototype.resolve = function(value) {
         this._resolve.call(this.promise, value);
+        return this;
+    };
+
+    Deferred.prototype.progress = function(value) {
+        try {
+          return this[PGLISTENERS].forEach(function (listener) {
+            return listener(value);
+          });
+        } catch (error) {
+          this.reject(error);
+        }
         return this;
     };
 
