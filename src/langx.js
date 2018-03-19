@@ -1499,7 +1499,7 @@ define(["./skylark"], function(skylark) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         },
 
-        URL: window.URL || window.webkitURL
+        URL: typeof window !== "undefined" ? window.URL || window.webkitURL : null
 
     });
 
