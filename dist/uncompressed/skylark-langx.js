@@ -1124,45 +1124,83 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         return prefix ? prefix + id : id;
     }
 
-
-
     var Deferred = function() {
         var self = this,
             p = this.promise = new Promise(function(resolve, reject) {
                 self._resolve = resolve;
                 self._reject = reject;
-            });
-
-        mixin(p,{
-            then : function(onResolved,onRejected,onProgress) {
-                if (onProgress) {
-                    this.progress(onProgress);
+            }),
+           added = {
+                state : function() {
+                    if (self.isResolved()) {
+                        return 'resolved';
+                    }
+                    if (self.isRejected()) {
+                        return 'rejected';
+                    }
+                    return 'pending';
+                },
+                then : function(onResolved,onRejected,onProgress) {
+                    if (onProgress) {
+                        this.progress(onProgress);
+                    }
+                    return mixin(Promise.prototype.then.call(this,
+                            onResolved && function(args) {
+                                if (args && args.__ctx__ !== undefined) {
+                                    return onResolved.apply(args.__ctx__,args);
+                                } else {
+                                    return onResolved(args);
+                                }
+                            },
+                            onRejected && function(args){
+                                if (args && args.__ctx__ !== undefined) {
+                                    return onRejected.apply(args.__ctx__,args);
+                                } else {
+                                    return onRejected(args);
+                                }
+                            }),added);
+                },
+                always: function(handler) {
+                    //this.done(handler);
+                    //this.fail(handler);
+                    this.then(handler,handler);
+                    return this;
+                },
+                done : function(handler) {
+                    return this.then(handler);
+                },
+                fail : function(handler) { 
+                    //return mixin(Promise.prototype.catch.call(this,handler),added);
+                    return this.then(null,handler);
+                }, 
+                progress : function(handler) {
+                    self[PGLISTENERS].push(handler);
+                    return this;
                 }
-                return Promise.prototype.then.call(this,onResolved,onRejected);
-            },
-            done : function(handler) {
-                return Promise.prototype.then.call(this,handler);
-            },
-            fail : function(handler) { 
-                return Promise.prototype.catch.call(this,handler);
-            }, 
-            progress : function(handler) {
-                self[PGLISTENERS].push(handler);
-                return this;
-            }
 
-        });
+            };
+
+        added.pipe = added.then;
+        mixin(p,added);
 
         this[PGLISTENERS] = [];
 
-        this.resolve = Deferred.prototype.resolve.bind(this);
-        this.reject = Deferred.prototype.reject.bind(this);
-        this.progress = Deferred.prototype.progress.bind(this);
+        //this.resolve = Deferred.prototype.resolve.bind(this);
+        //this.reject = Deferred.prototype.reject.bind(this);
+        //this.progress = Deferred.prototype.progress.bind(this);
 
     };
 
     Deferred.prototype.resolve = function(value) {
-        this._resolve.call(this.promise, value);
+        var args = slice.call(arguments);
+        return this.resolveWith(null,args);
+    };
+
+    Deferred.prototype.resolveWith = function(context,args) {
+        args = args ? makeArray(args) : []; 
+        args.__ctx__ = context;
+        this._resolve(args);
+        this._resolved = true;
         return this;
     };
 
@@ -1178,13 +1216,32 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
     };
 
     Deferred.prototype.reject = function(reason) {
-        this._reject.call(this.promise, reason);
+        var args = slice.call(arguments);
+        return this.rejectWith(null,args);
+    };
+
+    Deferred.prototype.rejectWith = function(context,args) {
+        args = args ? makeArray(args) : []; 
+        args.__ctx__ = context;
+        this._reject(args);
+        this._rejected = true;
         return this;
     };
 
-    Deferred.prototype.then = function(callback, errback, progback) {
-        return this.promise.then(callback, errback, progback);
+    Deferred.prototype.isResolved = function() {
+        return !!this._resolved;
     };
+
+    Deferred.prototype.isRejected = function() {
+        return !!this._rejected;
+    };
+
+    Deferred.prototype.then = function(callback, errback, progback) {
+        var p = result(this,"promise");
+        return p.then(callback, errback, progback);
+    };
+
+    Deferred.prototype.done  = Deferred.prototype.then;
 
     Deferred.all = function(array) {
         return Promise.all(array);
@@ -1193,6 +1250,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
     Deferred.first = function(array) {
         return Promise.race(array);
     };
+
 
     Deferred.when = function(valueOrPromise, callback, errback, progback) {
         var receivedPromise = valueOrPromise && typeof valueOrPromise.then === "function";
@@ -2308,6 +2366,9 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
                 return xhr[name](args);
             };
         });
+
+        Xhr.defaultOptions = XhrDefaultOptions;
+        Xhr.param = param;
 
         return Xhr;
     })();
