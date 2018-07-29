@@ -677,7 +677,7 @@ define(["./skylark"], function(skylark) {
     }
 
     function isArrayLike(obj) {
-        return !isString(obj) && !isHtmlNode(obj) && typeof obj.length == 'number';
+        return !isString(obj) && !isHtmlNode(obj) && typeof obj.length == 'number' && !isFunction(obj);
     }
 
     function isBoolean(obj) {
@@ -1173,10 +1173,10 @@ define(["./skylark"], function(skylark) {
             } else {
                 return new Deferred().resolve(valueOrPromise);
             }
-        } else if (!nativePromise) {
-            var deferred = new Deferred(valueOrPromise.cancel);
-            valueOrPromise.then(deferred.resolve, deferred.reject, deferred.progress);
-            valueOrPromise = deferred.promise;
+//        } else if (!nativePromise) {
+//            var deferred = new Deferred(valueOrPromise.cancel);
+//            valueOrPromise.then(deferred.resolve, deferred.reject, deferred.progress);
+//            valueOrPromise = deferred.promise;
         }
 
         if (callback || errback || progback) {
@@ -1841,6 +1841,54 @@ define(["./skylark"], function(skylark) {
         return results; // Object
     };
 
+    var async = {
+        parallel : function(arr,args,ctx) {
+            var rets = [];
+            ctx = ctx || null;
+            args = args || [];
+
+            each(arr,function(i,func){
+                rets.push(func.apply(ctx,args));
+            });
+
+            return Deferred.all(rets);
+        },
+
+        series : function(arr,args,ctx) {
+            var rets = [],
+                d = new Deferred(),
+                p = d.promise;
+
+            ctx = ctx || null;
+            args = args || [];
+
+            d.resolve();
+            each(arr,function(i,func){
+                p = p.then(function(){
+                    return func.apply(ctx,args);
+                });
+                rets.push(p);
+            });
+
+            return Deferred.all(rets);
+        },
+
+        waterful : function(arr,args,ctx) {
+            var d = new Deferred(),
+                p = d.promise;
+
+            ctx = ctx || null;
+            args = args || [];
+
+            d.resolveWith(ctx,args);
+
+            each(arr,function(i,func){
+                p = p.then(func);
+            });
+            return p;
+        }
+    };
+
     var ArrayStore = createClass({
         "klassName-": "ArrayStore",
 
@@ -2418,6 +2466,8 @@ define(["./skylark"], function(skylark) {
 
         ArrayStore : ArrayStore,
 
+        async : async,
+        
         before: aspect("before"),
 
         camelCase: function(str) {
