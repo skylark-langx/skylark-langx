@@ -886,6 +886,8 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
       return [ obj ];             
     }
 
+
+
     function map(elements, callback) {
         var value, values = [],
             i, key
@@ -1104,7 +1106,6 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
                 return transform(value, key).toString();
             }); // String
     }
-
 
     var _uid = 1;
 
@@ -1979,7 +1980,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
     };
 
     var ArrayStore = createClass({
-        "klassName-": "ArrayStore",
+        "klassName": "ArrayStore",
 
         "queryEngine": SimpleQueryEngine,
         
@@ -2267,7 +2268,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
                 }
                 var onloadend = function() {
                     var result, error = false
-                    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && url.startsWith('file:'))) {
+                    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && getAbsoluteUrl(url).startsWith('file:'))) {
                         dataType = dataType || mimeToDataType(options.mimeType || xhr.getResponseHeader('content-type'));
 
                         result = xhr.responseText;
