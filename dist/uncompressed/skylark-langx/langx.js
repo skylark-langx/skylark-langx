@@ -2015,7 +2015,6 @@ define(["./skylark"], function(skylark) {
 
     var Xhr = (function(){
         var jsonpID = 0,
-            document = window.document,
             key,
             name,
             rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
