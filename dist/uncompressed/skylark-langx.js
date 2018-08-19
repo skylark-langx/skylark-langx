@@ -373,7 +373,7 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
                             };
                         })(name, prop, _super[name]) :
                         prop;
-                } else if (typeof prop == "object" && prop!==null && (prop.get || prop.value !== undefined)) {
+                } else if (typeof prop == "object" && prop!==null && (prop.get)) {
                     Object.defineProperty(proto,name,prop);
                 } else {
                     proto[name] = prop;
@@ -605,6 +605,12 @@ define('skylark-langx/langx',["./skylark"], function(skylark) {
         });
     }
 
+    /*
+     * Converts camel case into dashes.
+     * @param {String} str
+     * @return {String}
+     * @exapmle marginTop -> margin-top
+     */
     function dasherize(str) {
         return str.replace(/::/g, '/')
             .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
