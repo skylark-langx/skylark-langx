@@ -1,6 +1,7 @@
 define([
-	"./types"
-],function(types){
+	"./types",
+    "./objects"
+],function(types,objects){
 	var filter = Array.prototype.filter,
 		isArrayLike = types.isArrayLike;
 
@@ -8,36 +9,6 @@ define([
         return filter.call(array, function(item) {
             return item != null;
         });
-    }
-
-    function each(obj, callback) {
-        var length, key, i, undef, value;
-
-        if (obj) {
-            length = obj.length;
-
-            if (length === undef) {
-                // Loop object items
-                for (key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        value = obj[key];
-                        if (callback.call(value, key, value) === false) {
-                            break;
-                        }
-                    }
-                }
-            } else {
-                // Loop array items
-                for (i = 0; i < length; i++) {
-                    value = obj[i];
-                    if (callback.call(value, i, value) === false) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return this;
     }
 
     function flatten(array) {
@@ -134,7 +105,7 @@ define([
             }
         },
 
-	    each: each,
+	    each: objects.each,
 
         flatten: flatten,
 
