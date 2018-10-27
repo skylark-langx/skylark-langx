@@ -399,6 +399,22 @@ define('skylark-langx/objects',[
         return this;
     }
 
+    function extend(target) {
+        var deep, args = slice.call(arguments, 1);
+        if (typeof target == 'boolean') {
+            deep = target
+            target = args.shift()
+        }
+        if (args.length == 0) {
+            args = [target];
+            target = this;
+        }
+        args.forEach(function(arg) {
+            mixin(target, arg, deep);
+        });
+        return target;
+    }
+
     // Retrieve the names of an object's own properties.
     // Delegates to **ECMAScript 5**'s native `Object.keys`.
     function keys(obj) {
@@ -580,6 +596,8 @@ define('skylark-langx/objects',[
 
         each : each,
 
+        extend : extend,
+
         has: has,
 
         isEqual: isEqual,
@@ -739,7 +757,6 @@ define('skylark-langx/klass',[
         ctor.prototype = new f();
     }
 
-
     var f1 = function() {
         function extendClass(ctor, props, options) {
             // Copy the properties to the prototype of the class.
@@ -865,9 +882,9 @@ define('skylark-langx/klass',[
             }
 
 
-            var _constructor = props.constructor;
-            if (_constructor === Object) {
-                _constructor = function() {
+            var _construct = props._construct;
+            if (!_construct) {
+                _construct = function() {
                     if (this.init) {
                         return this.init.apply(this, arguments);
                     }
@@ -887,7 +904,7 @@ define('skylark-langx/klass',[
                 )();
 
 
-            ctor._constructor = _constructor;
+            ctor._constructor = _construct;
             // Populate our constructed prototype object
             ctor.prototype = Object.create(innerParent.prototype);
 

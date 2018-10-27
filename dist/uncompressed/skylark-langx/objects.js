@@ -173,6 +173,22 @@ define([
         return this;
     }
 
+    function extend(target) {
+        var deep, args = slice.call(arguments, 1);
+        if (typeof target == 'boolean') {
+            deep = target
+            target = args.shift()
+        }
+        if (args.length == 0) {
+            args = [target];
+            target = this;
+        }
+        args.forEach(function(arg) {
+            mixin(target, arg, deep);
+        });
+        return target;
+    }
+
     // Retrieve the names of an object's own properties.
     // Delegates to **ECMAScript 5**'s native `Object.keys`.
     function keys(obj) {
@@ -353,6 +369,8 @@ define([
         defaults : createAssigner(allKeys, true),
 
         each : each,
+
+        extend : extend,
 
         has: has,
 

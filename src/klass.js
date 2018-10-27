@@ -16,7 +16,6 @@ define([
         ctor.prototype = new f();
     }
 
-
     var f1 = function() {
         function extendClass(ctor, props, options) {
             // Copy the properties to the prototype of the class.
@@ -142,9 +141,9 @@ define([
             }
 
 
-            var _constructor = props.constructor;
-            if (_constructor === Object) {
-                _constructor = function() {
+            var _construct = props._construct;
+            if (!_construct) {
+                _construct = function() {
                     if (this.init) {
                         return this.init.apply(this, arguments);
                     }
@@ -164,7 +163,7 @@ define([
                 )();
 
 
-            ctor._constructor = _constructor;
+            ctor._constructor = _construct;
             // Populate our constructed prototype object
             ctor.prototype = Object.create(innerParent.prototype);
 
