@@ -29,6 +29,7 @@ define([
         }
     }
 
+
     function trim(str) {
         return str == null ? "" : String.prototype.trim.call(str);
     }
