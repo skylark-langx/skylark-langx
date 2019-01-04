@@ -2,7 +2,7 @@ define([
 	"./Evented"
 ],function(Evented){
     var Stateful = Evented.inherit({
-        init : function(attributes, options) {
+        _constructor : function(attributes, options) {
             var attrs = attributes || {};
             options || (options = {});
             this.cid = uniqueId(this.cidPrefix);
