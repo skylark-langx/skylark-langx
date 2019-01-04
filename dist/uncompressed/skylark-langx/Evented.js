@@ -1,9 +1,11 @@
 define([
     "./klass",
+    "./arrays",
     "./objects",
 	"./types"
-],function(klass,objects,types){
+],function(klass,arrays,objects,types){
 	var slice = Array.prototype.slice,
+        compact = arrays.compact,
         isDefined = types.isDefined,
         isPlainObject = types.isPlainObject,
 		isFunction = types.isFunction,

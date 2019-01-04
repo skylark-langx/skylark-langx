@@ -86,13 +86,18 @@ define([
             }); // String
     }
 
+    var idCounter = 0;
+    function uniqueId (prefix) {
+        var id = ++idCounter + '';
+        return prefix ? prefix + id : id;
+    }
+
 	return {
         camelCase: function(str) {
             return str.replace(/-([\da-z])/g, function(a) {
                 return a.toUpperCase().replace('-', '');
             });
         },
-
 
         dasherize: dasherize,
 
@@ -110,6 +115,8 @@ define([
         substitute: substitute,
 
         trim: trim,
+
+        uniqueId: uniqueId,
 
         upperFirst: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);

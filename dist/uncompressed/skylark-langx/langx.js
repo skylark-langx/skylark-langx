@@ -66,13 +66,6 @@ define([
         return obj._uid || (obj._uid = _uid++);
     }
 
-    var idCounter = 0;
-    function uniqueId (prefix) {
-        var id = ++idCounter + '';
-        return prefix ? prefix + id : id;
-    }
-
-
     function langx() {
         return langx;
     }
@@ -87,8 +80,6 @@ define([
         toPixel: toPixel,
 
         uid: uid,
-
-        uniqueId: uniqueId,
 
         URL: typeof window !== "undefined" ? window.URL || window.webkitURL : null
 

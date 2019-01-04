@@ -68,7 +68,7 @@ let longEar = klass({
             var proto = ctor.prototype,
                 _super = ctor.superclass.prototype,
                 noOverrided = options && options.noOverrided,
-                overrides = options.overrides || {};
+                overrides = options && options.overrides || {};
 
             for (var name in props) {
                 if (name === "constructor") {
@@ -97,7 +97,7 @@ let longEar = klass({
                             };
                         })(name, prop, _super[name]) :
                         prop;
-                } else if (typeof prop == "object" && prop!==null && (prop.get)) {
+                } else if (types.isPlainObject(prop) && prop!==null && (prop.get)) {
                     Object.defineProperty(proto,name,prop);
                 } else {
                     proto[name] = prop;

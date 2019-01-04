@@ -809,7 +809,7 @@ let longEar = klass({
             var proto = ctor.prototype,
                 _super = ctor.superclass.prototype,
                 noOverrided = options && options.noOverrided,
-                overrides = options.overrides || {};
+                overrides = options && options.overrides || {};
 
             for (var name in props) {
                 if (name === "constructor") {
@@ -838,7 +838,7 @@ let longEar = klass({
                             };
                         })(name, prop, _super[name]) :
                         prop;
-                } else if (typeof prop == "object" && prop!==null && (prop.get)) {
+                } else if (types.isPlainObject(prop) && prop!==null && (prop.get)) {
                     Object.defineProperty(proto,name,prop);
                 } else {
                     proto[name] = prop;
@@ -1861,10 +1861,12 @@ define('skylark-langx/datetimes',[],function(){
 });
 define('skylark-langx/Evented',[
     "./klass",
+    "./arrays",
     "./objects",
 	"./types"
-],function(klass,objects,types){
+],function(klass,arrays,objects,types){
 	var slice = Array.prototype.slice,
+        compact = arrays.compact,
         isDefined = types.isDefined,
         isPlainObject = types.isPlainObject,
 		isFunction = types.isFunction,
@@ -2191,13 +2193,18 @@ define('skylark-langx/strings',[
             }); // String
     }
 
+    var idCounter = 0;
+    function uniqueId (prefix) {
+        var id = ++idCounter + '';
+        return prefix ? prefix + id : id;
+    }
+
 	return {
         camelCase: function(str) {
             return str.replace(/-([\da-z])/g, function(a) {
                 return a.toUpperCase().replace('-', '');
             });
         },
-
 
         dasherize: dasherize,
 
@@ -2215,6 +2222,8 @@ define('skylark-langx/strings',[
         substitute: substitute,
 
         trim: trim,
+
+        uniqueId: uniqueId,
 
         upperFirst: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
@@ -2701,10 +2710,19 @@ define('skylark-langx/Restful',[
     return Restful;
 });
 define('skylark-langx/Stateful',[
-	"./Evented"
-],function(Evented){
+	"./Evented",
+  "./strings",
+  "./objects"
+],function(Evented,strings,objects){
+    var isEqual = objects.isEqual,
+        mixin = objects.mixin,
+        result = objects.result,
+        isEmptyObject = objects.isEmptyObject,
+        clone = objects.clone,
+        uniqueId = strings.uniqueId;
+
     var Stateful = Evented.inherit({
-        _constructor : function(attributes, options) {
+        _construct : function(attributes, options) {
             var attrs = attributes || {};
             options || (options = {});
             this.cid = uniqueId(this.cidPrefix);
@@ -2971,13 +2989,6 @@ define('skylark-langx/langx',[
         return obj._uid || (obj._uid = _uid++);
     }
 
-    var idCounter = 0;
-    function uniqueId (prefix) {
-        var id = ++idCounter + '';
-        return prefix ? prefix + id : id;
-    }
-
-
     function langx() {
         return langx;
     }
@@ -2992,8 +3003,6 @@ define('skylark-langx/langx',[
         toPixel: toPixel,
 
         uid: uid,
-
-        uniqueId: uniqueId,
 
         URL: typeof window !== "undefined" ? window.URL || window.webkitURL : null
 

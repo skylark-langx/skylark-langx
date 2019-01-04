@@ -1,8 +1,17 @@
 define([
-	"./Evented"
-],function(Evented){
+	"./Evented",
+  "./strings",
+  "./objects"
+],function(Evented,strings,objects){
+    var isEqual = objects.isEqual,
+        mixin = objects.mixin,
+        result = objects.result,
+        isEmptyObject = objects.isEmptyObject,
+        clone = objects.clone,
+        uniqueId = strings.uniqueId;
+
     var Stateful = Evented.inherit({
-        _constructor : function(attributes, options) {
+        _construct : function(attributes, options) {
             var attrs = attributes || {};
             options || (options = {});
             this.cid = uniqueId(this.cidPrefix);
