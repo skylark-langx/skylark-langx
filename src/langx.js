@@ -9,13 +9,14 @@ define([
     "./Evented",
     "./funcs",
     "./klass",
+    "./numbers",
     "./objects",
     "./Restful",
     "./Stateful",
     "./strings",
     "./types",
     "./Xhr"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,klass,objects,Restful,Stateful,strings,types,Xhr) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,klass,numbers,objects,Restful,Stateful,strings,types,Xhr) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -86,7 +87,7 @@ define([
     });
 
 
-    mixin(langx, arrays,aspect,datetimes,funcs,objects,strings,types,{
+    mixin(langx, arrays,aspect,datetimes,funcs,numbers,objects,strings,types,{
         ArrayStore : ArrayStore,
 
         async : async,
