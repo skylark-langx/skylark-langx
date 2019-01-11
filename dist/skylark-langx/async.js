@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["./Deferred","./arrays"],function(n,e){var r=e.each;return{parallel:function(e,u,l){var t=[];return l=l||null,u=u||[],r(e,function(n,e){t.push(e.apply(l,u))}),n.all(t)},series:function(e,u,l){var t=[],a=new n,i=a.promise;return l=l||null,u=u||[],a.resolve(),r(e,function(n,e){i=i.then(function(){return e.apply(l,u)}),t.push(i)}),n.all(t)},waterful:function(e,u,l){var t=new n,a=t.promise;return l=l||null,u=u||[],t.resolveWith(l,u),r(e,function(n,e){a=a.then(e)}),a}}});
+define(["./Deferred","./objects"],function(n,e){var r=e.each;return{parallel:function(e,u,l){var t=[];return l=l||null,u=u||[],r(e,function(n,e){t.push(e.apply(l,u))}),n.all(t)},series:function(e,u,l){var t=[],i=new n,o=i.promise;return l=l||null,u=u||[],i.resolve(),r(e,function(n,e){o=o.then(function(){return e.apply(l,u)}),t.push(o)}),n.all(t)},waterful:function(e,u,l){var t=new n,i=t.promise;return l=l||null,u=u||[],t.resolveWith(l,u),r(e,function(n,e){i=i.then(e)}),i}}});
 //# sourceMappingURL=sourcemaps/async.js.map
