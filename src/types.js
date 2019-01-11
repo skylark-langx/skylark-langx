@@ -1,5 +1,7 @@
 define([
 ],function(){
+    var toString = {}.toString;
+    
     var type = (function() {
         var class2type = {};
 
