@@ -8,6 +8,7 @@ define([
     "./Deferred",
     "./Evented",
     "./funcs",
+    "./hoster",
     "./klass",
     "./numbers",
     "./objects",
@@ -16,7 +17,7 @@ define([
     "./strings",
     "./types",
     "./Xhr"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,klass,numbers,objects,Restful,Stateful,strings,types,Xhr) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,hoster,klass,numbers,objects,Restful,Stateful,strings,types,Xhr) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -95,6 +96,8 @@ define([
         Deferred: Deferred,
 
         Evented: Evented,
+
+        hoster : hoster,
 
         klass : klass,
 
