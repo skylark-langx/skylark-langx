@@ -1,7 +1,7 @@
 define([
 ],function(){
 	// The javascript host environment, brower and nodejs are supported.
-	var hostenv = {
+	var hoster = {
 		"isBrowser" : true, // default
 		"isNode" : null,
 		"global" : this,
@@ -10,8 +10,8 @@ define([
 	};
 
 	if (typeof process == "object" && process.versions && process.versions.node && process.versions.v8) {
-		hostenv.isNode = true;
-		hostenv.isBrowser = false;
+		hoster.isNode = true;
+		hoster.isBrowser = false;
 	}
 
 	hoster.global = (function(){
@@ -31,5 +31,5 @@ define([
 		return this;
 	})();
 
-	return  hostenv;
+	return  hoster;
 });

@@ -2481,7 +2481,7 @@ define('skylark-langx/Evented',[
 define('skylark-langx/hoster',[
 ],function(){
 	// The javascript host environment, brower and nodejs are supported.
-	var hostenv = {
+	var hoster = {
 		"isBrowser" : true, // default
 		"isNode" : null,
 		"global" : this,
@@ -2490,8 +2490,8 @@ define('skylark-langx/hoster',[
 	};
 
 	if (typeof process == "object" && process.versions && process.versions.node && process.versions.v8) {
-		hostenv.isNode = true;
-		hostenv.isBrowser = false;
+		hoster.isNode = true;
+		hoster.isBrowser = false;
 	}
 
 	hoster.global = (function(){
@@ -2511,7 +2511,7 @@ define('skylark-langx/hoster',[
 		return this;
 	})();
 
-	return  hostenv;
+	return  hoster;
 });
 define('skylark-langx/strings',[
 ],function(){
