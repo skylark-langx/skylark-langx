@@ -2511,6 +2511,18 @@ define('skylark-langx/hoster',[
 		return this;
 	})();
 
+	var _document = null;
+
+	Object.defineProperty(hoster,"document",function(){
+		if (!_document) {
+			var w = typeof window === 'undefined' ? require('html-element') : window;
+			_document = w.document;
+		}
+
+		return _document;
+	});
+
+
 	return  hoster;
 });
 define('skylark-langx/strings',[
