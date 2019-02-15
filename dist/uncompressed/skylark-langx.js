@@ -298,6 +298,8 @@ define('skylark-langx/types',[
 
         isNumber: isNumber,
 
+        isNumeric: isNumber,
+
         isObject: isObject,
 
         isPlainObject: isPlainObject,
