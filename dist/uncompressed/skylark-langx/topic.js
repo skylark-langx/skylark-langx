@@ -1,5 +1,5 @@
 define([
-	"Evented"
+	"./Evented"
 ],function(Evented){
 	var hub = new Evented();
 
