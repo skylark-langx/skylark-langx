@@ -997,7 +997,7 @@ define('skylark-langx/objects',[
 
     function result(obj, path, fallback) {
         if (!isArray(path)) {
-            path = [path]
+            path = path.split(".");//[path]
         };
         var length = path.length;
         if (!length) {
