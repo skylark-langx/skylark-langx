@@ -353,7 +353,7 @@ define([
             name = path[i++];
 
         while (i < length) {
-            ns = ns[name] = ns[name]　|| {};
+            ns = ns[name] = ns[name] || {};
             name = path[i++];
         }
 
