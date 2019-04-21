@@ -1,7 +1,8 @@
 define([
+    "./_attach",
 	"./types",
     "./numbers"
-],function(types,numbers){
+],function(_attach,types,numbers){
 	var hasOwnProperty = Object.prototype.hasOwnProperty,
         slice = Array.prototype.slice,
         isBoolean = types.isBoolean,
@@ -343,23 +344,6 @@ define([
         return this;
     }
 
-    function attach(obj1,path,obj2) {
-        if (!isArray(path)) {
-            path = path.split(".");//[path]
-        };
-        var length = path.length,
-            ns=obj1,
-            i=0,
-            name = path[i++];
-
-        while (i < length) {
-            ns = ns[name] = ns[name] || {};
-            name = path[i++];
-        }
-
-        return ns[name] = obj2;
-    }
-
     function result(obj, path, fallback) {
         if (!isArray(path)) {
             path = path.split(".");//[path]
@@ -427,7 +411,7 @@ define([
     return {
         allKeys: allKeys,
 
-        attach : attach,
+        attach : _attach,
 
         clone: clone,
 
