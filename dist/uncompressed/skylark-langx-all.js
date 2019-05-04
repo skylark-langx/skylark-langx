@@ -492,6 +492,26 @@ define('skylark-langx/arrays',[
         return flatten(values)
     }
 
+
+    function merge( first, second ) {
+      var l = second.length,
+          i = first.length,
+          j = 0;
+
+      if ( typeof l === "number" ) {
+        for ( ; j < l; j++ ) {
+          first[ i++ ] = second[ j ];
+        }
+      } else {
+        while ( second[j] !== undefined ) {
+          first[ i++ ] = second[ j++ ];
+        }
+      }
+
+      first.length = i;
+
+      return first;
+    }
     function uniq(array) {
         return filter.call(array, function(item, idx) {
             return array.indexOf(item) == idx;
@@ -518,6 +538,8 @@ define('skylark-langx/arrays',[
         inArray: inArray,
 
         makeArray: makeArray,
+
+        merge : merge,
 
         forEach : forEach,
 
