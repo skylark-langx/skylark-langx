@@ -95,7 +95,11 @@ define([
                 args = [e];
             }
             [e.type || e.name, "all"].forEach(function(eventName) {
-                var listeners = self._hub[eventName];
+                var parsed = parse(eventName),
+                    name = parsed.name,
+                    ns = parsed.ns;
+
+                var listeners = self._hub[name];
                 if (!listeners) {
                     return;
                 }
@@ -105,6 +109,9 @@ define([
 
                 for (var i = 0; i < len; i++) {
                     var listener = listeners[i];
+                    if (ns && (!listener.ns ||  !listener.ns.startsWith(ns))) {
+                        continue;
+                    }
                     if (e.data) {
                         if (listener.data) {
                             e.data = mixin({}, listener.data, e.data);

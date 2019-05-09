@@ -101,7 +101,7 @@ define([
     }
 
     function isHtmlNode(obj) {
-        return obj && (obj instanceof Node);
+        return obj && obj.nodeType; // obj instanceof Node; //Consider the elements in IFRAME
     }
 
     function isInstanceOf( /*Object*/ value, /*Type*/ type) {
