@@ -67,6 +67,10 @@ define([
         });
     }
 
+    function filter2(array,func) {
+      return filter.call(array,func);
+    }
+
     function flatten(array) {
         if (isArrayLike(array)) {
             var result = [];
@@ -170,6 +174,11 @@ define([
 
       return first;
     }
+
+    function reduce(array,callback,initialValue) {
+        return Array.prototype.reduce.call(array,callback,initialValue);
+    }
+
     function uniq(array) {
         return filter.call(array, function(item, idx) {
             return array.indexOf(item) == idx;
@@ -191,6 +200,8 @@ define([
             }
         },
 
+        filter : filter2,
+        
         flatten: flatten,
 
         inArray: inArray,
@@ -203,6 +214,8 @@ define([
 
         map : map,
         
+        reduce : reduce,
+
         uniq : uniq
 
     }

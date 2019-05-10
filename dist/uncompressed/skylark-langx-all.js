@@ -409,6 +409,10 @@ define('skylark-langx/arrays',[
         });
     }
 
+    function filter2(array,func) {
+      return filter.call(array,func);
+    }
+
     function flatten(array) {
         if (isArrayLike(array)) {
             var result = [];
@@ -512,6 +516,11 @@ define('skylark-langx/arrays',[
 
       return first;
     }
+
+    function reduce(array,callback,initialValue) {
+        return Array.prototype.reduce.call(array,callback,initialValue);
+    }
+
     function uniq(array) {
         return filter.call(array, function(item, idx) {
             return array.indexOf(item) == idx;
@@ -533,6 +542,8 @@ define('skylark-langx/arrays',[
             }
         },
 
+        filter : filter2,
+        
         flatten: flatten,
 
         inArray: inArray,
@@ -545,6 +556,8 @@ define('skylark-langx/arrays',[
 
         map : map,
         
+        reduce : reduce,
+
         uniq : uniq
 
     }
@@ -1022,6 +1035,37 @@ define('skylark-langx/objects',[
         return args.target;
     }
 
+   // Return a copy of the object without the blacklisted properties.
+    function omit(obj, prop1,prop2) {
+        if (!obj) {
+            return null;
+        }
+        var result = mixin({},obj);
+        for(var i=1;i<arguments.length;i++) {
+            var pn = arguments[i];
+            if (pn in obj) {
+                delete result[pn];
+            }
+        }
+        return result;
+
+    }
+
+   // Return a copy of the object only containing the whitelisted properties.
+    function pick(obj,prop1,prop2) {
+        if (!obj) {
+            return null;
+        }
+        var result = {};
+        for(var i=1;i<arguments.length;i++) {
+            var pn = arguments[i];
+            if (pn in obj) {
+                result[pn] = obj[pn];
+            }
+        }
+        return result;
+    }
+
     function removeItem(items, item) {
         if (isArray(items)) {
             var idx = items.indexOf(item);
@@ -1071,7 +1115,7 @@ define('skylark-langx/objects',[
 
     // Retrieve the values of an object's properties.
     function values(obj) {
-        var keys = _.keys(obj);
+        var keys = allKeys(obj);
         var length = keys.length;
         var values = Array(length);
         for (var i = 0; i < length; i++) {
@@ -1128,6 +1172,10 @@ define('skylark-langx/objects',[
         keys: keys,
 
         mixin: mixin,
+
+        omit: omit,
+
+        pick: pick,
 
         removeItem: removeItem,
 
