@@ -1,7 +1,7 @@
 define([
 ],function(){
     // add default escape function for escaping HTML entities
-    var escapeCharMap = freeze({
+    var escapeCharMap = Object.freeze({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -231,7 +231,7 @@ define([
         },
 
         rtrim : rtrim,
-        
+
         serializeValue: function(value) {
             return JSON.stringify(value)
         },
