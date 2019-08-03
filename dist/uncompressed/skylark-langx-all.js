@@ -3174,6 +3174,10 @@ define('skylark-langx/Xhr',[
 
                 serializeData(options)
 
+                if (options.beforeSend) {
+                    options.beforeSend.call(this, xhr, options);
+                }                
+
                 var dataType = options.dataType || options.handleAs,
                     mime = options.mimeType || options.accepts[dataType],
                     headers = options.headers,
