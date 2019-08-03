@@ -131,10 +131,14 @@ define([
         var param = function(obj, traditional) {
             var params = []
             params.add = function(key, value) {
-                if (isFunction(value)) value = value()
-                if (value == null) value = ""
-                this.push(escape(key) + '=' + escape(value))
-            }
+                if (isFunction(value)) {
+                  value = value();
+                }
+                if (value == null) {
+                  value = "";
+                }
+                this.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+            };
             serialize(params, obj, traditional)
             return params.join('&').replace(/%20/g, '+')
         };
