@@ -204,6 +204,8 @@ define([
         
         flatten: flatten,
 
+        grep: grep,
+
         inArray: inArray,
 
         makeArray: makeArray,
