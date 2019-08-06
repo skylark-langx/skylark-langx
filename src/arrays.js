@@ -1,5 +1,6 @@
 define([
-	"./types"
+	"./types",
+  "./objects"
 ],function(types,objects){
 	var filter = Array.prototype.filter,
 		isArrayLike = types.isArrayLike;
@@ -94,7 +95,7 @@ define([
     function grep(array, callback) {
         var out = [];
 
-        each(array, function(i, item) {
+        objects.each(array, function(i, item) {
             if (callback(item, i)) {
                 out.push(item);
             }
