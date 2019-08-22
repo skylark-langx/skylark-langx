@@ -55,6 +55,13 @@ define([
         return str.toString().replace(escapeChars, replaceChar);
     }
 
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0;
+            var v = c === 'x' ? r : ((r & 0x3) | 0x8);
+            return v.toString(16);
+        });
+    }
 
     function trim(str) {
         return str == null ? "" : String.prototype.trim.call(str);
@@ -188,6 +195,30 @@ define([
         return str.replace(/\s+$/g, '');
     }
 
+    // Slugify a string
+    function slugify(str) {
+        str = str.replace(/^\s+|\s+$/g, '');
+
+        // Make the string lowercase
+        str = str.toLowerCase();
+
+        // Remove accents, swap ñ for n, etc
+        var from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆÍÌÎÏŇÑÓÖÒÔÕØŘŔŠŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇíìîïňñóöòôõøðřŕšťúůüùûýÿžþÞĐđßÆa·/_,:;";
+        var to   = "AAAAAACCCDEEEEEEEEIIIINNOOOOOORRSTUUUUUYYZaaaaaacccdeeeeeeeeiiiinnooooooorrstuuuuuyyzbBDdBAa------";
+        for (var i=0, l=from.length ; i<l ; i++) {
+            str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+
+        // Remove invalid chars
+        str = str.replace(/[^a-z0-9 -]/g, '') 
+        // Collapse whitespace and replace by -
+        .replace(/\s+/g, '-') 
+        // Collapse dashes
+        .replace(/-+/g, '-'); 
+
+        return str;
+    }    
+
     // return boolean if string 'true' or string 'false', or if a parsable string which is a number
     // also supports JSON object and/or arrays parsing
     function toType(str) {
@@ -226,6 +257,8 @@ define([
 
         escapeHTML : escapeHTML,
 
+        generateUUID : generateUUID,
+
         lowerFirst: function(str) {
             return str.charAt(0).toLowerCase() + str.slice(1);
         },
@@ -238,6 +271,8 @@ define([
 
 
         substitute: substitute,
+
+        slugify : slugify,
 
         template : template,
 
