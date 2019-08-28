@@ -22,7 +22,23 @@
   "author": "Hudaokeji Co.,Ltd",
   "license": "MIT",
   "bugs": "https://github.com/skylarkjs/skylark-langx/issues",
-  "dependencies": {},
+  "dependencies": {
+    "skylark-langx-arrays": "https://github.com/skylarklangx/skylark-langx-arrays#master",
+    "skylark-langx-aspect": "https://github.com/skylarklangx/skylark-langx-aspect#master",
+    "skylark-langx-async": "https://github.com/skylarklangx/skylark-langx-async#master",
+    "skylark-langx-datetimes": "https://github.com/skylarklangx/skylark-langx-datetimes#master",
+    "skylark-langx-emitter": "https://github.com/skylarklangx/skylark-langx-emitter#master",
+    "skylark-langx-funcs": "https://github.com/skylarklangx/skylark-langx-funcs#master",
+    "skylark-langx-hoster": "https://github.com/skylarklangx/skylark-langx-hoster#master",
+    "skylark-langx-klass": "https://github.com/skylarklangx/skylark-langx-klass#master",
+    "skylark-langx-ns": "https://github.com/skylarklangx/skylark-langx-ns#master",
+    "skylark-langx-numbers": "https://github.com/skylarklangx/skylark-langx-numbers#master",
+    "skylark-langx-objects": "https://github.com/skylarklangx/skylark-langx-objects#master",
+    "skylark-langx-strings": "git+https://github.com/skylarklangx/skylark-langx-strings.git#master",
+    "skylark-langx-topic": "https://github.com/skylarklangx/skylark-langx-topic#master",
+    "skylark-langx-types": "https://github.com/skylarklangx/skylark-langx-types#master",
+    "skylark-langx-xhr": "https://github.com/skylarklangx/skylark-langx-xhr#master"
+  },
   "engines": {
     "node": ">=0.8.0"
   }
