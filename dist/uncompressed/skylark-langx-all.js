@@ -1848,8 +1848,9 @@ define('skylark-langx/ArrayStore',[
 
 	return ArrayStore;
 });
-define('skylark-langx/aspect',[
-],function(){
+define('skylark-langx-aspect/aspect',[
+    "skylark-langx-ns"
+],function(skylark){
 
   var undefined, nextId = 0;
     function advise(dispatcher, type, advice, receiveArguments){
@@ -1965,13 +1966,25 @@ define('skylark-langx/aspect',[
         };
     }
 
-    return {
+    return skylark.attach("langx.aspect",{
         after: aspect("after"),
  
         around: aspect("around"),
         
         before: aspect("before")
-    };
+    });
+});
+define('skylark-langx-aspect/main',[
+	"./aspect"
+],function(aspect){
+	return aspect;
+});
+define('skylark-langx-aspect', ['skylark-langx-aspect/main'], function (main) { return main; });
+
+define('skylark-langx/aspect',[
+    "skylark-langx-aspect"
+],function(aspect){
+  return aspect;
 });
 define('skylark-langx-funcs/funcs',[
   "skylark-langx-ns/ns",
@@ -2917,8 +2930,9 @@ define('skylark-langx/objects',[
 ],function(objects){
     return objects;
 });
-define('skylark-langx/strings',[
-],function(){
+define('skylark-langx-strings/strings',[
+    "skylark-langx-ns"
+],function(skylark){
     // add default escape function for escaping HTML entities
     var escapeCharMap = Object.freeze({
         '&': '&amp;',
@@ -3129,9 +3143,9 @@ define('skylark-langx/strings',[
         }
 
         // Remove invalid chars
-        str = str.replace(/[^a-z0-9 -]/g, '') 
+        //str = str.replace(/[^a-z0-9 -]/g, '') 
         // Collapse whitespace and replace by -
-        .replace(/\s+/g, '-') 
+        str = str.replace(/\s+/g, '-') 
         // Collapse dashes
         .replace(/-+/g, '-'); 
 
@@ -3163,7 +3177,7 @@ define('skylark-langx/strings',[
         return str;
     }
 
-	return {
+	return skylark.attach("langx.strings",{
         camelCase: function(str) {
             return str.replace(/-([\da-z])/g, function(a) {
                 return a.toUpperCase().replace('-', '');
@@ -3202,8 +3216,20 @@ define('skylark-langx/strings',[
         upperFirst: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
-	} ; 
+	}) ; 
 
+});
+define('skylark-langx-strings/main',[
+	"./strings"
+],function(strings){
+	return strings;
+});
+define('skylark-langx-strings', ['skylark-langx-strings/main'], function (main) { return main; });
+
+define('skylark-langx/strings',[
+    "skylark-langx-strings"
+],function(strings){
+    return strings;
 });
 define('skylark-langx-xhr/Xhr',[
   "skylark-langx-ns/ns",
