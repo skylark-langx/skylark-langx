@@ -1,1 +1,1 @@
-module.exports = require("./dist/uncompressed/skylark-langx");
+module.exports = require("./dist/uncompressed/skylark-langx-all");
