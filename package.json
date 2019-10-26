@@ -37,7 +37,7 @@
     "skylark-langx-strings": "git+https://github.com/skylarklangx/skylark-langx-strings.git#master",
     "skylark-langx-topic": "git+https://github.com/skylarklangx/skylark-langx-topic.git#master",
     "skylark-langx-types": "git+https://github.com/skylarklangx/skylark-langx-types.git#master",
-    "skylark-langx-xhr": "git+https://github.com/skylarklangx/skylark-langx-xhr.git#master"
+    "skylark-net-http": "git+https://github.com/skylark-net/skylark-net-http.git#master"
   },
   "engines": {
     "node": ">=0.8.0"

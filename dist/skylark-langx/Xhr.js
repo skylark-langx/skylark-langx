@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx-xhr"],function(n){return n});
+define(["skylark-net-http/Xhr"],function(n){return n});
 //# sourceMappingURL=sourcemaps/Xhr.js.map

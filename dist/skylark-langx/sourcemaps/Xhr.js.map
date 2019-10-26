@@ -1,1 +1,1 @@
-{"version":3,"sources":["Xhr.js"],"names":["define","xhr"],"mappings":";;;;;;;AAAAA,QACI,qBACF,SAASC,GACP,OAAOA","file":"../Xhr.js","sourcesContent":["define([\r\n    \"skylark-langx-xhr\"\r\n],function(xhr){\r\n    return xhr;\r\n});"]}
+{"version":3,"sources":["Xhr.js"],"names":["define","Xhr"],"mappings":";;;;;;;AAAAA,QACI,wBACF,SAASC,GACP,OAAOA","file":"../Xhr.js","sourcesContent":["define([\r\n    \"skylark-net-http/Xhr\"\r\n],function(Xhr){\r\n    return Xhr;\r\n});"]}
