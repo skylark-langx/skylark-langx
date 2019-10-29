@@ -1,1 +1,0 @@
-{"version":3,"sources":["Xhr.js"],"names":["define","Xhr"],"mappings":";;;;;;;AAAAA,QACI,wBACF,SAASC,GACP,OAAOA","file":"../Xhr.js","sourcesContent":["define([\r\n    \"skylark-net-http/Xhr\"\r\n],function(Xhr){\r\n    return Xhr;\r\n});"]}
