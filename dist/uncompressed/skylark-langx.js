@@ -819,9 +819,7 @@ define('skylark-langx/langx',[
         hoster : hoster,
 
         klass : klass,
-
-        Restful: Restful,
-        
+       
         Stateful: Stateful,
 
         topic : topic
