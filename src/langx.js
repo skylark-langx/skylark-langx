@@ -6,6 +6,7 @@ define([
     "./async",
     "./datetimes",
     "./Deferred",
+    "./Emitter",
     "./Evented",
     "./funcs",
     "./hoster",
@@ -16,7 +17,7 @@ define([
     "./strings",
     "./topic",
     "./types"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Emitter,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -27,13 +28,6 @@ define([
         safeMixin = objects.safeMixin,
         isFunction = types.isFunction;
 
-
-    function createEvent(type, props) {
-        var e = new CustomEvent(type, props);
-
-        return safeMixin(e, props);
-    }
-    
 
     function funcArg(context, arg, idx, payload) {
         return isFunction(arg) ? arg.call(context, idx, payload) : arg;
@@ -72,7 +66,7 @@ define([
     }
 
     mixin(langx, {
-        createEvent : createEvent,
+        createEvent : Emitter.createEvent,
 
         funcArg: funcArg,
 
@@ -93,6 +87,8 @@ define([
         async : async,
         
         Deferred: Deferred,
+
+        Emitter: Emitter,
 
         Evented: Evented,
 

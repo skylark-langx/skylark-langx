@@ -466,6 +466,11 @@ define('skylark-langx/Deferred',[
 ],function(Deferred){
     return Deferred;
 });
+define('skylark-langx/Emitter',[
+    "skylark-langx-emitter"
+],function(Evented){
+    return Evented;
+});
 define('skylark-langx/Evented',[
     "skylark-langx-emitter"
 ],function(Evented){
@@ -726,6 +731,7 @@ define('skylark-langx/langx',[
     "./async",
     "./datetimes",
     "./Deferred",
+    "./Emitter",
     "./Evented",
     "./funcs",
     "./hoster",
@@ -736,7 +742,7 @@ define('skylark-langx/langx',[
     "./strings",
     "./topic",
     "./types"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Emitter,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -747,13 +753,6 @@ define('skylark-langx/langx',[
         safeMixin = objects.safeMixin,
         isFunction = types.isFunction;
 
-
-    function createEvent(type, props) {
-        var e = new CustomEvent(type, props);
-
-        return safeMixin(e, props);
-    }
-    
 
     function funcArg(context, arg, idx, payload) {
         return isFunction(arg) ? arg.call(context, idx, payload) : arg;
@@ -792,7 +791,7 @@ define('skylark-langx/langx',[
     }
 
     mixin(langx, {
-        createEvent : createEvent,
+        createEvent : Emitter.createEvent,
 
         funcArg: funcArg,
 
@@ -813,6 +812,8 @@ define('skylark-langx/langx',[
         async : async,
         
         Deferred: Deferred,
+
+        Emitter: Emitter,
 
         Evented: Evented,
 
