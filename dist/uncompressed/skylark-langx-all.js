@@ -2805,10 +2805,12 @@ define('skylark-langx-emitter/Emitter',[
             }
 
             return this;
+        },
+
+        trigger  : function() {
+            return this.emit.apply(this,arguments);
         }
     });
-
-    Emitter.prototype.trigger = Emitter.prototype.emit;
 
     Emitter.createEvent = function (type,props) {
         var e = new CustomEvent(type,props);
