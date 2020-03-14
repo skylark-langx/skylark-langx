@@ -1008,9 +1008,9 @@ define('skylark-langx-arrays/arrays',[
   "skylark-langx-types",
   "skylark-langx-objects"
 ],function(skylark,types,objects){
-	var filter = Array.prototype.filter,
+  var filter = Array.prototype.filter,
       find = Array.prototype.find,
-		isArrayLike = types.isArrayLike;
+    isArrayLike = types.isArrayLike;
 
     /**
      * The base implementation of `_.findIndex` and `_.findLastIndex` without
@@ -1193,7 +1193,7 @@ define('skylark-langx-arrays/arrays',[
         })
     }
 
-    function find(array,func) {
+    function find2(array,func) {
       return find.call(array,func);
     }
 
@@ -1214,7 +1214,7 @@ define('skylark-langx-arrays/arrays',[
 
         filter : filter2,
 
-        find : find,
+        find : find2,
         
         flatten: flatten,
 
@@ -2061,15 +2061,38 @@ define('skylark-langx-funcs/funcs',[
         };
     })();
 
+
+    // By default, Underscore uses ERB-style template delimiters, change the
+    // following template settings to use alternative delimiters.
     var templateSettings = {
         evaluate: /<%([\s\S]+?)%>/g,
         interpolate: /<%=([\s\S]+?)%>/g,
         escape: /<%-([\s\S]+?)%>/g
     };
 
+    // When customizing `templateSettings`, if you don't want to define an
+    // interpolation, evaluation or escaping regex, we need one that is
+    // guaranteed not to match.
+    var noMatch = /(.)^/;
 
-    function template(text, settings, oldSettings) {
-        if (!settings && oldSettings) settings = oldSettings;
+
+    // Certain characters need to be escaped so that they can be put into a
+    // string literal.
+    var escapes = {
+      "'":      "'",
+      '\\':     '\\',
+      '\r':     'r',
+      '\n':     'n',
+      '\t':     't',
+      '\u2028': 'u2028',
+      '\u2029': 'u2029'
+    };
+
+    var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+
+
+    function template(text, data, settings) {
+        var render;
         settings = objects.defaults({}, settings,templateSettings);
 
         // Combine delimiters into one regular expression via alternation.
@@ -2083,18 +2106,19 @@ define('skylark-langx-funcs/funcs',[
         var index = 0;
         var source = "__p+='";
         text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-          source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
-          index = offset + match.length;
+          source += text.slice(index, offset)
+              .replace(escaper, function(match) { return '\\' + escapes[match]; });
 
           if (escape) {
             source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-          } else if (interpolate) {
+          }
+          if (interpolate) {
             source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-          } else if (evaluate) {
+          }
+          if (evaluate) {
             source += "';\n" + evaluate + "\n__p+='";
           }
-
-          // Adobe VMs need the match returned to produce the correct offset.
+          index = offset + match.length;
           return match;
         });
         source += "';\n";
@@ -2106,7 +2130,6 @@ define('skylark-langx-funcs/funcs',[
           "print=function(){__p+=__j.call(arguments,'');};\n" +
           source + 'return __p;\n';
 
-        var render;
         try {
           render = new Function(settings.variable || 'obj', '_', source);
         } catch (e) {
@@ -2114,9 +2137,12 @@ define('skylark-langx-funcs/funcs',[
           throw e;
         }
 
-        var template = function(data) {
-          return render.call(this, data, _);
-        };
+        if (data) {
+          return render(data,this)
+        }
+        var template = proxy(function(data) {
+          return render.call(this, data,this);
+        },this);
 
         // Provide the compiled source as a convenience for precompilation.
         var argument = settings.variable || 'obj';
@@ -3267,7 +3293,7 @@ define('skylark-langx-strings/strings',[
 
         slugify : slugify,
 
-        template : template,
+        //template : template,
 
         trim: trim,
 
