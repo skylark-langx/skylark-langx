@@ -2670,13 +2670,69 @@ define('skylark-langx/Deferred',[
 ],function(Deferred){
     return Deferred;
 });
+define('skylark-langx-emitter/Event',[
+  "skylark-langx-objects",
+  "skylark-langx-funcs",
+  "skylark-langx-klass",
+],function(objects,funcs,klass){
+    var eventMethods = {
+        preventDefault: "isDefaultPrevented",
+        stopImmediatePropagation: "isImmediatePropagationStopped",
+        stopPropagation: "isPropagationStopped"
+     };
+        
+
+    function compatible(event, source) {
+        if (source || !event.isDefaultPrevented) {
+            if (!source) {
+                source = event;
+            }
+
+            objects.each(eventMethods, function(name, predicate) {
+                var sourceMethod = source[name];
+                event[name] = function() {
+                    this[predicate] = funcs.returnTrue;
+                    return sourceMethod && sourceMethod.apply(source, arguments);
+                }
+                event[predicate] = funcs.returnFalse;
+            });
+        }
+        return event;
+    }
+
+
+    /*
+    var Event = klass({
+        _construct : function(type,props) {
+            CustomEvent.call(this,type.props);
+            objects.safeMixin(this, props);
+            compatible(this);
+        }
+    },CustomEvent);
+    */
+
+    class Event extends CustomEvent {
+        constructor(type,props) {
+            super(type,props);
+            objects.safeMixin(this, props);
+            compatible(this);
+        } 
+    }
+
+
+    Event.compatible = compatible;
+
+    return Event;
+    
+});
 define('skylark-langx-emitter/Emitter',[
   "skylark-langx-ns/ns",
   "skylark-langx-types",
   "skylark-langx-objects",
   "skylark-langx-arrays",
-  "skylark-langx-klass"
-],function(skylark,types,objects,arrays,klass){
+  "skylark-langx-klass",
+  "./Event"
+],function(skylark,types,objects,arrays,klass,Event){
     var slice = Array.prototype.slice,
         compact = arrays.compact,
         isDefined = types.isDefined,
@@ -2755,7 +2811,7 @@ define('skylark-langx-emitter/Emitter',[
             var self = this;
 
             if (isString(e)) {
-                e = new CustomEvent(e);
+                e = new Event(e); //new CustomEvent(e);
             }
 
             Object.defineProperty(e,"target",{
@@ -2782,6 +2838,9 @@ define('skylark-langx-emitter/Emitter',[
                     reCompact = false;
 
                 for (var i = 0; i < len; i++) {
+                    if (e.isImmediatePropagationStopped && e.isImmediatePropagationStopped()) {
+                        return this;
+                    }
                     var listener = listeners[i];
                     if (ns && (!listener.ns ||  !listener.ns.startsWith(ns))) {
                         continue;
@@ -2956,9 +3015,12 @@ define('skylark-langx-emitter/Emitter',[
     });
 
     Emitter.createEvent = function (type,props) {
-        var e = new CustomEvent(type,props);
-        return safeMixin(e, props);
+        //var e = new CustomEvent(type,props);
+        //return safeMixin(e, props);
+        return new Event(type,props);
     };
+
+    Emitter.Event = Event;
 
     return skylark.attach("langx.Emitter",Emitter);
 
