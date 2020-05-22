@@ -467,14 +467,14 @@ define('skylark-langx/Deferred',[
     return Deferred;
 });
 define('skylark-langx/Emitter',[
-    "skylark-langx-emitter"
-],function(Evented){
-    return Evented;
+    "skylark-langx-events/Emitter"
+],function(Emitter){
+    return Emitter;
 });
 define('skylark-langx/Evented',[
-    "skylark-langx-emitter"
-],function(Evented){
-    return Evented;
+    "./Emitter"
+],function(Emitter){
+    return Emitter;
 });
 define('skylark-langx/funcs',[
     "skylark-langx-funcs"
