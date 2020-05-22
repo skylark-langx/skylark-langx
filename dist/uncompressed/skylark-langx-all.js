@@ -2730,7 +2730,7 @@ define('skylark-langx-events/Event',[
     return Event;
     
 });
-define('skylark-langx-events/Handler',[
+define('skylark-langx-events/Listener',[
   "skylark-langx-types",
   "skylark-langx-objects",
   "skylark-langx-arrays",
@@ -2749,7 +2749,7 @@ define('skylark-langx-events/Handler',[
         safeMixin = objects.safeMixin;
 
 
-    var Handler = klass({
+    var Listener = klass({
 
         listenTo: function(obj, event, callback, /*used internally*/ one) {
             if (!obj) {
@@ -2847,7 +2847,7 @@ define('skylark-langx-events/Handler',[
         }
     });
 
-    return events.Handler = Handler;
+    return events.Listener = Listener;
 
 });
 define('skylark-langx-events/Emitter',[
@@ -2857,8 +2857,8 @@ define('skylark-langx-events/Emitter',[
   "skylark-langx-klass",
   "./events",
   "./Event",
-  "./Handler"
-],function(types,objects,arrays,klass,events,Event,Handler){
+  "./Listener"
+],function(types,objects,arrays,klass,events,Event,Listener){
     var slice = Array.prototype.slice,
         compact = arrays.compact,
         isDefined = types.isDefined,
@@ -2877,7 +2877,7 @@ define('skylark-langx-events/Emitter',[
         };
     }
 
-    var Emitter = Handler.inherit({
+    var Emitter = Listener.inherit({
         on: function(events, selector, data, callback, ctx, /*used internally*/ one) {
             var self = this,
                 _hub = this._hub || (this._hub = {});
@@ -3831,366 +3831,15 @@ define('skylark-langx/Stateful',[
 
 	return Stateful;
 });
-define('skylark-langx-emitter/Event',[
-  "skylark-langx-objects",
-  "skylark-langx-funcs",
-  "skylark-langx-klass",
-],function(objects,funcs,klass){
-    var eventMethods = {
-        preventDefault: "isDefaultPrevented",
-        stopImmediatePropagation: "isImmediatePropagationStopped",
-        stopPropagation: "isPropagationStopped"
-     };
-        
-
-    function compatible(event, source) {
-        if (source || !event.isDefaultPrevented) {
-            if (!source) {
-                source = event;
-            }
-
-            objects.each(eventMethods, function(name, predicate) {
-                var sourceMethod = source[name];
-                event[name] = function() {
-                    this[predicate] = funcs.returnTrue;
-                    return sourceMethod && sourceMethod.apply(source, arguments);
-                }
-                event[predicate] = funcs.returnFalse;
-            });
-        }
-        return event;
-    }
-
-
-    /*
-    var Event = klass({
-        _construct : function(type,props) {
-            CustomEvent.call(this,type.props);
-            objects.safeMixin(this, props);
-            compatible(this);
-        }
-    },CustomEvent);
-    */
-
-    class Event extends CustomEvent {
-        constructor(type,props) {
-            super(type,props);
-            objects.safeMixin(this, props);
-            compatible(this);
-        } 
-    }
-
-
-    Event.compatible = compatible;
-
-    return Event;
-    
-});
 define('skylark-langx-emitter/Emitter',[
-  "skylark-langx-ns/ns",
-  "skylark-langx-types",
-  "skylark-langx-objects",
-  "skylark-langx-arrays",
-  "skylark-langx-klass",
-  "./Event"
-],function(skylark,types,objects,arrays,klass,Event){
-    var slice = Array.prototype.slice,
-        compact = arrays.compact,
-        isDefined = types.isDefined,
-        isPlainObject = types.isPlainObject,
-        isFunction = types.isFunction,
-        isString = types.isString,
-        isEmptyObject = types.isEmptyObject,
-        mixin = objects.mixin,
-        safeMixin = objects.safeMixin;
-
-    function parse(event) {
-        var segs = ("" + event).split(".");
-        return {
-            name: segs[0],
-            ns: segs.slice(1).join(" ")
-        };
-    }
-
-    var Emitter = klass({
-        on: function(events, selector, data, callback, ctx, /*used internally*/ one) {
-            var self = this,
-                _hub = this._hub || (this._hub = {});
-
-            if (isPlainObject(events)) {
-                ctx = callback;
-                each(events, function(type, fn) {
-                    self.on(type, selector, data, fn, ctx, one);
-                });
-                return this;
-            }
-
-            if (!isString(selector) && !isFunction(callback)) {
-                ctx = callback;
-                callback = data;
-                data = selector;
-                selector = undefined;
-            }
-
-            if (isFunction(data)) {
-                ctx = callback;
-                callback = data;
-                data = null;
-            }
-
-            if (isString(events)) {
-                events = events.split(/\s/)
-            }
-
-            events.forEach(function(event) {
-                var parsed = parse(event),
-                    name = parsed.name,
-                    ns = parsed.ns;
-
-                (_hub[name] || (_hub[name] = [])).push({
-                    fn: callback,
-                    selector: selector,
-                    data: data,
-                    ctx: ctx,
-                    ns : ns,
-                    one: one
-                });
-            });
-
-            return this;
-        },
-
-        one: function(events, selector, data, callback, ctx) {
-            return this.on(events, selector, data, callback, ctx, 1);
-        },
-
-        emit: function(e /*,argument list*/ ) {
-            if (!this._hub) {
-                return this;
-            }
-
-            var self = this;
-
-            if (isString(e)) {
-                e = new Event(e); //new CustomEvent(e);
-            }
-
-            Object.defineProperty(e,"target",{
-                value : this
-            });
-
-            var args = slice.call(arguments, 1);
-            if (isDefined(args)) {
-                args = [e].concat(args);
-            } else {
-                args = [e];
-            }
-            [e.type || e.name, "all"].forEach(function(eventName) {
-                var parsed = parse(eventName),
-                    name = parsed.name,
-                    ns = parsed.ns;
-
-                var listeners = self._hub[name];
-                if (!listeners) {
-                    return;
-                }
-
-                var len = listeners.length,
-                    reCompact = false;
-
-                for (var i = 0; i < len; i++) {
-                    if (e.isImmediatePropagationStopped && e.isImmediatePropagationStopped()) {
-                        return this;
-                    }
-                    var listener = listeners[i];
-                    if (ns && (!listener.ns ||  !listener.ns.startsWith(ns))) {
-                        continue;
-                    }
-                    if (e.data) {
-                        if (listener.data) {
-                            e.data = mixin({}, listener.data, e.data);
-                        }
-                    } else {
-                        e.data = listener.data || null;
-                    }
-                    listener.fn.apply(listener.ctx, args);
-                    if (listener.one) {
-                        listeners[i] = null;
-                        reCompact = true;
-                    }
-                }
-
-                if (reCompact) {
-                    self._hub[eventName] = compact(listeners);
-                }
-
-            });
-            return this;
-        },
-
-        listened: function(event) {
-            var evtArr = ((this._hub || (this._events = {}))[event] || []);
-            return evtArr.length > 0;
-        },
-
-        listenTo: function(obj, event, callback, /*used internally*/ one) {
-            if (!obj) {
-                return this;
-            }
-
-            // Bind callbacks on obj,
-            if (isString(callback)) {
-                callback = this[callback];
-            }
-
-            if (one) {
-                obj.one(event, callback, this);
-            } else {
-                obj.on(event, callback, this);
-            }
-
-            //keep track of them on listening.
-            var listeningTo = this._listeningTo || (this._listeningTo = []),
-                listening;
-
-            for (var i = 0; i < listeningTo.length; i++) {
-                if (listeningTo[i].obj == obj) {
-                    listening = listeningTo[i];
-                    break;
-                }
-            }
-            if (!listening) {
-                listeningTo.push(
-                    listening = {
-                        obj: obj,
-                        events: {}
-                    }
-                );
-            }
-            var listeningEvents = listening.events,
-                listeningEvent = listeningEvents[event] = listeningEvents[event] || [];
-            if (listeningEvent.indexOf(callback) == -1) {
-                listeningEvent.push(callback);
-            }
-
-            return this;
-        },
-
-        listenToOnce: function(obj, event, callback) {
-            return this.listenTo(obj, event, callback, 1);
-        },
-
-        off: function(events, callback) {
-            var _hub = this._hub || (this._hub = {});
-            if (isString(events)) {
-                events = events.split(/\s/)
-            }
-
-            events.forEach(function(event) {
-                var parsed = parse(event),
-                    name = parsed.name,
-                    ns = parsed.ns;
-
-                var evts = _hub[name];
-
-                if (evts) {
-                    var liveEvents = [];
-
-                    if (callback || ns) {
-                        for (var i = 0, len = evts.length; i < len; i++) {
-                            
-                            if (callback && evts[i].fn !== callback && evts[i].fn._ !== callback) {
-                                liveEvents.push(evts[i]);
-                                continue;
-                            } 
-
-                            if (ns && (!evts[i].ns || evts[i].ns.indexOf(ns)!=0)) {
-                                liveEvents.push(evts[i]);
-                                continue;
-                            }
-                        }
-                    }
-
-                    if (liveEvents.length) {
-                        _hub[name] = liveEvents;
-                    } else {
-                        delete _hub[name];
-                    }
-
-                }
-            });
-
-            return this;
-        },
-        unlistenTo: function(obj, event, callback) {
-            var listeningTo = this._listeningTo;
-            if (!listeningTo) {
-                return this;
-            }
-            for (var i = 0; i < listeningTo.length; i++) {
-                var listening = listeningTo[i];
-
-                if (obj && obj != listening.obj) {
-                    continue;
-                }
-
-                var listeningEvents = listening.events;
-                for (var eventName in listeningEvents) {
-                    if (event && event != eventName) {
-                        continue;
-                    }
-
-                    var listeningEvent = listeningEvents[eventName];
-
-                    for (var j = 0; j < listeningEvent.length; j++) {
-                        if (!callback || callback == listeningEvent[i]) {
-                            listening.obj.off(eventName, listeningEvent[i], this);
-                            listeningEvent[i] = null;
-                        }
-                    }
-
-                    listeningEvent = listeningEvents[eventName] = compact(listeningEvent);
-
-                    if (isEmptyObject(listeningEvent)) {
-                        listeningEvents[eventName] = null;
-                    }
-
-                }
-
-                if (isEmptyObject(listeningEvents)) {
-                    listeningTo[i] = null;
-                }
-            }
-
-            listeningTo = this._listeningTo = compact(listeningTo);
-            if (isEmptyObject(listeningTo)) {
-                this._listeningTo = null;
-            }
-
-            return this;
-        },
-
-        trigger  : function() {
-            return this.emit.apply(this,arguments);
-        }
-    });
-
-    Emitter.createEvent = function (type,props) {
-        //var e = new CustomEvent(type,props);
-        //return safeMixin(e, props);
-        return new Event(type,props);
-    };
-
-    Emitter.Event = Event;
-
-    return skylark.attach("langx.Emitter",Emitter);
-
+    "skylark-langx-events/Emitter"
+],function(Emitter){
+    return Emitter;
 });
 define('skylark-langx-emitter/Evented',[
-  "skylark-langx-ns/ns",
 	"./Emitter"
-],function(skylark,Emitter){
-	return skylark.attach("langx.Evented",Emitter);
+],function(Emitter){
+	return Emitter;
 });
 define('skylark-langx-topic/topic',[
 	"skylark-langx-ns",
