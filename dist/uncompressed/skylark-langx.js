@@ -486,6 +486,11 @@ define('skylark-langx/hoster',[
 ],function(hoster){
 	return hoster;
 });
+define('skylark-langx/maths',[
+    "skylark-langx-maths"
+],function(maths){
+    return maths;
+});
 define('skylark-langx/numbers',[
 	"skylark-langx-numbers"
 ],function(numbers){
@@ -736,6 +741,7 @@ define('skylark-langx/langx',[
     "./funcs",
     "./hoster",
     "./klass",
+    "./maths",
     "./numbers",
     "./objects",
     "./Stateful",
