@@ -3603,8 +3603,13 @@ define('skylark-langx-strings/strings',[
         return document.getElementById(id).innerHTML;
     };
 
+
+    function ltrim(str) {
+        return str.replace(/^\s+/, '');
+    }
+    
     function rtrim(str) {
-        return str.replace(/\s+$/g, '');
+        return str.replace(/\s+$/, '');
     }
 
     // Slugify a string
@@ -3670,6 +3675,8 @@ define('skylark-langx-strings/strings',[
         escapeHTML : escapeHTML,
 
         generateUUID : generateUUID,
+
+        ltrim : ltrim,
 
         lowerFirst: function(str) {
             return str.charAt(0).toLowerCase() + str.slice(1);
