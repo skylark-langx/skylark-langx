@@ -2722,7 +2722,7 @@ define('skylark-langx-hoster/hoster',[
 		return _document;
 	});
 
-	if (typeof hoster.global.CustomEvent === undefined) {
+	if (hoster.global.CustomEvent === undefined) {
 		hoster.global.CustomEvent = function(type,props) {
 			this.type = type;
 			this.props = props;
