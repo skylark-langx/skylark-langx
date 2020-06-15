@@ -1,0 +1,1 @@
+{"version":3,"sources":["klass.js"],"names":["define","klass"],"mappings":";;;;;;;AAAAA,QACI,uBACF,SAASC,GACP,OAAOA","file":"../klass.js","sourcesContent":["define([\r\n    \"skylark-langx-klass\"\r\n],function(klass){\r\n    return klass;\r\n})"]}

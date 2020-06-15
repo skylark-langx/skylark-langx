@@ -1,0 +1,1 @@
+{"version":3,"sources":["Deferred.js"],"names":["define","Deferred"],"mappings":";;;;;;;AAAAA,QACI,gCACF,SAASC,GACP,OAAOA","file":"../Deferred.js","sourcesContent":["define([\r\n    \"skylark-langx-async/Deferred\"\r\n],function(Deferred){\r\n    return Deferred;\r\n});"]}

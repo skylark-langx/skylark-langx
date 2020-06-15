@@ -1,0 +1,1 @@
+{"version":3,"sources":["skylark.js"],"names":["define","ns"],"mappings":";;;;;;;AAAAA,QACI,oBACD,SAASC,GACX,OAAOA","file":"../skylark.js","sourcesContent":["define([\r\n    \"skylark-langx-ns\"\r\n], function(ns) {\r\n\treturn ns;\r\n});\r\n"]}
