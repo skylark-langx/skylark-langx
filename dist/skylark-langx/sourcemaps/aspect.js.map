@@ -1,1 +1,0 @@
-{"version":3,"sources":["aspect.js"],"names":["define","aspect"],"mappings":";;;;;;;AAAAA,QACI,wBACF,SAASC,GACT,OAAOA","file":"../aspect.js","sourcesContent":["define([\r\n    \"skylark-langx-aspect\"\r\n],function(aspect){\r\n  return aspect;\r\n});"]}
