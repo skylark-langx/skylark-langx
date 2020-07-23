@@ -456,6 +456,11 @@ define('skylark-langx/async',[
 ],function(async){
     return async;
 });
+define('skylark-langx/binary',[
+	"skylark-langx-binary"
+],function(binary){
+  return binary;
+});
 define('skylark-langx/datetimes',[
     "skylark-langx-datetimes"
 ],function(datetimes){
@@ -739,6 +744,7 @@ define('skylark-langx/langx',[
     "./ArrayStore",
     "./aspect",
     "./async",
+    "./binary",
     "./datetimes",
     "./Deferred",
     "./Emitter",
@@ -760,6 +766,7 @@ define('skylark-langx/langx',[
     ArrayStore,
     aspect,
     async,
+    binary,
     datetimes,
     Deferred,
     Emitter,

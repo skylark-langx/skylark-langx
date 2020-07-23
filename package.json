@@ -26,6 +26,7 @@
     "skylark-langx-arrays": "git+https://github.com/skylark-langx/skylark-langx-arrays.git#master",
     "skylark-langx-aspect": "git+https://github.com/skylark-langx/skylark-langx-aspect.git#master",
     "skylark-langx-async": "git+https://github.com/skylark-langx/skylark-langx-async.git#master",
+    "skylark-langx-binary": "git+https://github.com/skylark-langx/skylark-langx-binary.git#master",
     "skylark-langx-datetimes": "git+https://github.com/skylark-langx/skylark-langx-datetimes.git#master",
     "skylark-langx-events": "git+https://github.com/skylark-langx/skylark-langx-events.git#master",
     "skylark-langx-funcs": "git+https://github.com/skylark-langx/skylark-langx-funcs.git#master",
