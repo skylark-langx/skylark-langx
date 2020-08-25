@@ -14,7 +14,7 @@ define([
     "./hoster",
     "./klass",
     "./maths",
-    "./numbers",
+    "./numerics",
     "./objects",
     "./Stateful",
     "./strings",
@@ -36,7 +36,7 @@ define([
     hoster,
     klass,
     maths,
-    numbers,
+    numerics,
     objects,
     Stateful,
     strings,
@@ -106,7 +106,7 @@ define([
     });
 
 
-    mixin(langx, arrays,aspect,datetimes,funcs,numbers,objects,strings,types,{
+    mixin(langx, arrays,aspect,datetimes,funcs,numerics,objects,strings,types,{
         ArrayStore : ArrayStore,
 
         async : async,

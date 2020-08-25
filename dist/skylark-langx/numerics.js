@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx-numbers"],function(n){return n});
-//# sourceMappingURL=sourcemaps/numbers.js.map
+define(["skylark-langx-numerics"],function(n){return n});
+//# sourceMappingURL=sourcemaps/numerics.js.map
