@@ -4,7 +4,7 @@
   "description": "A simple JavaScript language extension library, including class support, Evented class, Deferred class and some commonly used tool functions.",
   "main": "./index",
   "scripts": {
-    "build": "sbundle build ."
+    "build": "slib build ."
   },
   "homepage": "www.skylarkjs.org",
   "repository": {
