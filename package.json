@@ -34,7 +34,6 @@
     "skylark-langx-klass": "git+https://github.com/skylark-langx/skylark-langx-klass.git#master",
     "skylark-langx-maths": "git+https://github.com/skylark-langx/skylark-langx-maths.git#master",
     "skylark-langx-ns": "git+https://github.com/skylark-langx/skylark-langx-ns.git#master",
-    "skylark-langx-numbers": "git+https://github.com/skylark-langx/skylark-langx-numerics.git#master",
     "skylark-langx-numerics": "git+https://github.com/skylark-langx/skylark-langx-numerics.git#master",
     "skylark-langx-objects": "git+https://github.com/skylark-langx/skylark-langx-objects.git#master",
     "skylark-langx-strings": "git+https://github.com/skylark-langx/skylark-langx-strings.git#master",
