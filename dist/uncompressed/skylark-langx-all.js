@@ -1019,9 +1019,9 @@ define('skylark-langx-arrays/arrays',[
   "skylark-langx-types",
   "skylark-langx-objects"
 ],function(skylark,types,objects){
-  var filter = Array.prototype.filter,
-      find = Array.prototype.find,
-    isArrayLike = types.isArrayLike;
+    var filter = Array.prototype.filter,
+        find = Array.prototype.find,
+        isArrayLike = types.isArrayLike;
 
     /**
      * The base implementation of `_.findIndex` and `_.findLastIndex` without
@@ -1233,7 +1233,9 @@ define('skylark-langx-arrays/arrays',[
 
         inArray: inArray,
 
-        makeArray: makeArray,
+        makeArray: makeArray, // 
+
+        toArray : makeArray,
 
         merge : merge,
 
@@ -3715,13 +3717,13 @@ define('skylark-langx-maths/maths',[
 
 		degToRad: function ( degrees ) {
 
-			return degrees * MathUtils.DEG2RAD;
+			return degrees * maths.DEG2RAD;
 
 		},
 
 		radToDeg: function ( radians ) {
 
-			return radians * MathUtils.RAD2DEG;
+			return radians * maths.RAD2DEG;
 
 		},
 
