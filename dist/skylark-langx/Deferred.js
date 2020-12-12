@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx-async/Deferred"],function(e){return e});
+define(["skylark-langx-async"],function(e){return e.Deferred});
 //# sourceMappingURL=sourcemaps/Deferred.js.map

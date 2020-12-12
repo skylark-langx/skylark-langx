@@ -467,14 +467,14 @@ define('skylark-langx/datetimes',[
     return datetimes;
 });
 define('skylark-langx/Deferred',[
-    "skylark-langx-async/Deferred"
-],function(Deferred){
-    return Deferred;
+    "skylark-langx-async"
+],function(async){
+    return async.Deferred;
 });
 define('skylark-langx/Emitter',[
-    "skylark-langx-events/Emitter"
-],function(Emitter){
-    return Emitter;
+    "skylark-langx-events"
+],function(events){
+    return events.Emitter;
 });
 define('skylark-langx/Evented',[
     "./Emitter"

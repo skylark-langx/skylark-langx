@@ -1,5 +1,5 @@
 define([
-    "skylark-langx-events/Emitter"
-],function(Emitter){
-    return Emitter;
+    "skylark-langx-events"
+],function(events){
+    return events.Emitter;
 })

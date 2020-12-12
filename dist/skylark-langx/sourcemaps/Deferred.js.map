@@ -1,1 +1,1 @@
-{"version":3,"sources":["Deferred.js"],"names":["define","Deferred"],"mappings":";;;;;;;AAAAA,QACI,gCACF,SAASC,GACP,OAAOA","file":"../Deferred.js","sourcesContent":["define([\r\n    \"skylark-langx-async/Deferred\"\r\n],function(Deferred){\r\n    return Deferred;\r\n});"]}
+{"version":3,"sources":["Deferred.js"],"names":["define","async","Deferred"],"mappings":";;;;;;;AAAAA,QACI,uBACF,SAASC,GACP,OAAOA,EAAMC","file":"../Deferred.js","sourcesContent":["define([\r\n    \"skylark-langx-async\"\r\n],function(async){\r\n    return async.Deferred;\r\n});"]}

@@ -2709,7 +2709,7 @@ define('skylark-langx/async',[
     return async;
 });
 define('skylark-langx-binary/binary',[
-  "skylark-langx-ns/ns",
+  "skylark-langx-ns",
 ],function(skylark){
 	"use strict";
 
@@ -2888,9 +2888,9 @@ define('skylark-langx/datetimes',[
     return datetimes;
 });
 define('skylark-langx/Deferred',[
-    "skylark-langx-async/Deferred"
-],function(Deferred){
-    return Deferred;
+    "skylark-langx-async"
+],function(async){
+    return async.Deferred;
 });
 define('skylark-langx-events/events',[
 	"skylark-langx-ns"
@@ -3567,16 +3567,6 @@ define('skylark-langx-events/Emitter',[
     return events.Emitter = Emitter;
 
 });
-define('skylark-langx/Emitter',[
-    "skylark-langx-events/Emitter"
-],function(Emitter){
-    return Emitter;
-});
-define('skylark-langx/Evented',[
-    "./Emitter"
-],function(Emitter){
-    return Emitter;
-});
 define('skylark-langx-events/createEvent',[
 	"./events",
 	"./Event"
@@ -3600,6 +3590,16 @@ define('skylark-langx-events/main',[
 });
 define('skylark-langx-events', ['skylark-langx-events/main'], function (main) { return main; });
 
+define('skylark-langx/Emitter',[
+    "skylark-langx-events"
+],function(events){
+    return events.Emitter;
+});
+define('skylark-langx/Evented',[
+    "./Emitter"
+],function(Emitter){
+    return Emitter;
+});
 define('skylark-langx/events',[
 	"skylark-langx-events"
 ],function(events){

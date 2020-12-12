@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx-events/Emitter"],function(e){return e});
+define(["skylark-langx-events"],function(e){return e.Emitter});
 //# sourceMappingURL=sourcemaps/Emitter.js.map

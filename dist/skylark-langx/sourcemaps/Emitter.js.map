@@ -1,1 +1,1 @@
-{"version":3,"sources":["Emitter.js"],"names":["define","Emitter"],"mappings":";;;;;;;AAAAA,QACI,gCACF,SAASC,GACP,OAAOA","file":"../Emitter.js","sourcesContent":["define([\r\n    \"skylark-langx-events/Emitter\"\r\n],function(Emitter){\r\n    return Emitter;\r\n})"]}
+{"version":3,"sources":["Emitter.js"],"names":["define","events","Emitter"],"mappings":";;;;;;;AAAAA,QACI,wBACF,SAASC,GACP,OAAOA,EAAOC","file":"../Emitter.js","sourcesContent":["define([\r\n    \"skylark-langx-events\"\r\n],function(events){\r\n    return events.Emitter;\r\n})"]}
