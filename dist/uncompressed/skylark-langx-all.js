@@ -966,6 +966,14 @@ define('skylark-langx-objects/objects',[
 
     }
 
+    function scall(obj,method,arg1,arg2) {
+        if (obj && obj[method]) {
+            var args = (2 in arguments) && slice.call(arguments, 2);
+
+            return obj[method].apply(obj,args);
+        }
+    }
+
     return skylark.attach("langx.objects",{
         allKeys: allKeys,
 
@@ -1000,6 +1008,8 @@ define('skylark-langx-objects/objects',[
         result : result,
         
         safeMixin: safeMixin,
+
+        scall,
 
         values: values
     });
