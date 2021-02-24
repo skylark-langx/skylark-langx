@@ -2041,22 +2041,66 @@ define('skylark-langx-funcs/funcs',[
 
     });
 });
-define('skylark-langx-funcs/debounce',[
-	"./funcs"
+define('skylark-langx-funcs/defer',[
+    "./funcs"
 ],function(funcs){
+    function defer(fn,args,context) {
+        var ret = {
+            stop : null
+        },
+        id,
+        fn1 = fn;
+
+        if (args) {
+            fn1 = function() {
+                fn.apply(context,args);
+            };
+        }
+        if (requestAnimationFrame) {
+            id = requestAnimationFrame(fn1);
+            ret.stop = function() {
+                return cancelAnimationFrame(id);
+            };
+        } else {
+            id = setTimeoutout(fn1);
+            ret.stop = function() {
+                return clearTimeout(id);
+            };
+        }
+        return ret;
+    }
+
+    return funcs.defer = defer;
+});
+define('skylark-langx-funcs/debounce',[
+	"./funcs",
+    "./defer"
+],function(funcs,defer){
    
-    function debounce(fn, wait) {
-        var timeout;
+    function debounce(fn, wait,useAnimationFrame) {
+        var timeout,
+            defered;
+
         return function () {
             var context = this, args = arguments;
             var later = function () {
                 timeout = null;
-                fn.apply(context, args);
+                if (useAnimationFrame) {
+                    defered = defer(fn,args,context);
+                } else {
+                    fn.apply(context, args);
+                }
             };
 
             function stop() {
-                if (timeout) clearTimeout(timeout);
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                if (defered) {
+                    defered.stop();
+                }
                 timeout = void 0;
+                defered = void 0;
             }
 
             stop();
@@ -2070,30 +2114,6 @@ define('skylark-langx-funcs/debounce',[
 
     return funcs.debounce = debounce;
 
-});
-define('skylark-langx-funcs/defer',[
-    "./funcs"
-],function(funcs){
-    function defer(fn) {
-        var ret = {
-            stop : null
-        },
-        id ;
-        if (requestAnimationFrame) {
-            id = requestAnimationFrame(fn);
-            ret.stop = function() {
-                return cancelAnimationFrame(id);
-            };
-        } else {
-            id = setTimeoutout(fn);
-            ret.stop = function() {
-                return clearTimeout(id);
-            };
-        }
-        return ret;
-    }
-
-    return funcs.defer = defer;
 });
 define('skylark-langx-funcs/delegate',[
   "skylark-langx-objects",
@@ -2249,8 +2269,10 @@ define('skylark-langx-funcs/proxy',[
 
 });
 define('skylark-langx-funcs/template',[
-	"./funcs"
-],function(funcs){
+  "skylark-langx-objects",
+  "./funcs",
+  "./proxy"
+],function(objects,funcs,proxy){
     var slice = Array.prototype.slice;
 
    
