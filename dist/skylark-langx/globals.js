@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["./langx"],function(n){return n});
-//# sourceMappingURL=sourcemaps/main.js.map
+define(["skylark-langx-globals"],function(n){return n});
+//# sourceMappingURL=sourcemaps/globals.js.map

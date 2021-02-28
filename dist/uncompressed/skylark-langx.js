@@ -491,6 +491,11 @@ define('skylark-langx/funcs',[
 ],function(funcs){
     return funcs;
 });
+define('skylark-langx/globals',[
+    "skylark-langx-globals"
+],function(globals){
+    return globals;
+});
 define('skylark-langx/hoster',[
 	"skylark-langx-hoster"
 ],function(hoster){
@@ -751,6 +756,7 @@ define('skylark-langx/langx',[
     "./Evented",
     "./events",
     "./funcs",
+    "./globals",
     "./hoster",
     "./klass",
     "./maths",
@@ -773,6 +779,7 @@ define('skylark-langx/langx',[
     Evented,
     events,
     funcs,
+    globals,
     hoster,
     klass,
     maths,
@@ -869,10 +876,9 @@ define('skylark-langx/langx',[
     return skylark.langx = langx;
 });
 define('skylark-langx/main',[
-    "./skylark",
     "./langx"
-], function(skylark) {
-    return skylark;
+], function(langx) {
+    return langx;
 });
 
 define('skylark-langx', ['skylark-langx/main'], function (main) { return main; });

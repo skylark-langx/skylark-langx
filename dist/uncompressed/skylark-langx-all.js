@@ -3642,6 +3642,86 @@ define('skylark-langx/funcs',[
 ],function(funcs){
     return funcs;
 });
+define('skylark-langx-globals/globals',[
+	"skylark-langx-ns"
+],function(ns) {
+	var globals = (function(){
+		if (typeof global !== 'undefined' && typeof global !== 'function') {
+			// global spec defines a reference to the global object called 'global'
+			// https://github.com/tc39/proposal-global
+			// `global` is also defined in NodeJS
+			return global;
+		} else if (typeof window !== 'undefined') {
+			// window is defined in browsers
+			return window;
+		}
+		else if (typeof self !== 'undefined') {
+			// self is defined in WebWorkers
+			return self;
+		}
+		return this;
+	})();
+
+	return ns.attach("langx.globals",globals);
+
+});
+define('skylark-langx-globals/console',[
+	"./globals"
+], function(globals) {
+	return globals.console = console;
+});
+define('skylark-langx-globals/document',[
+	"./globals"
+], function(globals) {
+	var topLevel = typeof global !== 'undefined' ? global :
+	    typeof window !== 'undefined' ? window : {};
+
+	var doccy;
+
+	if (typeof document !== 'undefined') {
+	    doccy = document;
+	} else {
+        doccy  = require('min-document');
+	}
+
+
+	return globals.document = doccy;
+});
+
+
+
+
+define('skylark-langx-globals/window',[
+	"./globals"
+], function(globals) {
+
+	var win = (function() {
+		if (typeof window !== "undefined") {
+		    return window;
+		} else {
+		    return {};
+		}
+	})();
+
+	return globals.window = win;
+});
+
+define('skylark-langx-globals/main',[
+	"./globals",
+	"./console",
+	"./document",
+	"./window"
+],function(globals){
+
+	return globals;
+});
+define('skylark-langx-globals', ['skylark-langx-globals/main'], function (main) { return main; });
+
+define('skylark-langx/globals',[
+    "skylark-langx-globals"
+],function(globals){
+    return globals;
+});
 define('skylark-langx/hoster',[
 	"skylark-langx-hoster"
 ],function(hoster){
@@ -10282,6 +10362,7 @@ define('skylark-langx/langx',[
     "./Evented",
     "./events",
     "./funcs",
+    "./globals",
     "./hoster",
     "./klass",
     "./maths",
@@ -10304,6 +10385,7 @@ define('skylark-langx/langx',[
     Evented,
     events,
     funcs,
+    globals,
     hoster,
     klass,
     maths,
@@ -10400,10 +10482,9 @@ define('skylark-langx/langx',[
     return skylark.langx = langx;
 });
 define('skylark-langx/main',[
-    "./skylark",
     "./langx"
-], function(skylark) {
-    return skylark;
+], function(langx) {
+    return langx;
 });
 
 define('skylark-langx', ['skylark-langx/main'], function (main) { return main; });

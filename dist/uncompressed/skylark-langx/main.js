@@ -1,6 +1,5 @@
 define([
-    "./skylark",
     "./langx"
-], function(skylark) {
-    return skylark;
+], function(langx) {
+    return langx;
 });
