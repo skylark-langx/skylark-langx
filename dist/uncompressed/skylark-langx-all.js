@@ -1270,12 +1270,33 @@ define('skylark-langx/arrays',[
 ],function(arrays){
   return arrays;
 });
-define('skylark-langx-klass/klass',[
+define('skylark-langx-constructs/constructs',[
+  "skylark-langx-ns"
+],function(skylark){
+
+    return skylark.attach("langx.constructs",{});
+});
+define('skylark-langx-constructs/inherit',[
+	"./constructs"
+],function(constructs){
+
+    function inherit(ctor, base) {
+        var f = function() {};
+        f.prototype = base.prototype;
+
+        ctor.prototype = new f();
+    }
+
+    return constructs.inherit = inherit
+});
+define('skylark-langx-constructs/klass',[
   "skylark-langx-ns",
   "skylark-langx-types",
   "skylark-langx-objects",
   "skylark-langx-arrays",
-],function(skylark,types,objects,arrays){
+  "./constructs",
+  "./inherit"
+],function(skylark,types,objects,arrays,constructs,inherit){
     var uniq = arrays.uniq,
         has = objects.has,
         mixin = objects.mixin,
@@ -1328,12 +1349,7 @@ let longEar = klass({
 },rabbit);
 */
     
-    function inherit(ctor, base) {
-        var f = function() {};
-        f.prototype = base.prototype;
 
-        ctor.prototype = new f();
-    }
 
     var f1 = function() {
         function extendClass(ctor, props, options) {
@@ -1519,7 +1535,15 @@ let longEar = klass({
 
     var createClass = f1();
 
-    return skylark.attach("langx.klass",createClass);
+    return constructs.klass = createClass;
+});
+define('skylark-langx-klass/klass',[
+  "skylark-langx-ns",
+  "skylark-langx-constructs/klass"
+],function(skylark,klass){
+
+
+    return skylark.attach("langx.klass",klass);
 });
 define('skylark-langx-klass/main',[
 	"./klass"
@@ -2841,6 +2865,20 @@ define('skylark-langx/binary',[
 	"skylark-langx-binary"
 ],function(binary){
   return binary;
+});
+define('skylark-langx-constructs/main',[
+	"./constructs",
+	"./inherit",
+	"./klass"
+],function(constructs){
+	return constructs;
+});
+define('skylark-langx-constructs', ['skylark-langx-constructs/main'], function (main) { return main; });
+
+define('skylark-langx/constructs',[
+	"skylark-langx-constructs"
+],function(constructs){
+  return constructs;
 });
 define('skylark-langx-datetimes/datetimes',[
     "skylark-langx-ns"
@@ -10356,6 +10394,7 @@ define('skylark-langx/langx',[
     "./aspect",
     "./async",
     "./binary",
+    "./constructs",
     "./datetimes",
     "./Deferred",
     "./Emitter",
@@ -10379,6 +10418,7 @@ define('skylark-langx/langx',[
     aspect,
     async,
     binary,
+    constructs,
     datetimes,
     Deferred,
     Emitter,

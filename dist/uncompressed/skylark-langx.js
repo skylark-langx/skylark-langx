@@ -461,6 +461,11 @@ define('skylark-langx/binary',[
 ],function(binary){
   return binary;
 });
+define('skylark-langx/constructs',[
+	"skylark-langx-constructs"
+],function(constructs){
+  return constructs;
+});
 define('skylark-langx/datetimes',[
     "skylark-langx-datetimes"
 ],function(datetimes){
@@ -750,6 +755,7 @@ define('skylark-langx/langx',[
     "./aspect",
     "./async",
     "./binary",
+    "./constructs",
     "./datetimes",
     "./Deferred",
     "./Emitter",
@@ -773,6 +779,7 @@ define('skylark-langx/langx',[
     aspect,
     async,
     binary,
+    constructs,
     datetimes,
     Deferred,
     Emitter,
