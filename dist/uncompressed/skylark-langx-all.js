@@ -101,7 +101,8 @@ define('skylark-langx-ns/_attach',[],function(){
             name = path[i++];
         }
 
-        return ns[name] = obj2;
+        ns[name] = obj2 || {};
+        return ns[name];
     }
 });
 define('skylark-langx-ns/ns',[
