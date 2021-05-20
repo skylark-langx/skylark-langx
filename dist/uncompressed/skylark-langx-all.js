@@ -3618,13 +3618,15 @@ define('skylark-langx-events/Emitter',[
                     if (ns && (!listener.ns ||  !listener.ns.startsWith(ns))) {
                         continue;
                     }
-                    if (e.data) {
-                        if (listener.data) {
-                            e.data = mixin({}, listener.data, e.data);
-                        }
-                    } else {
-                        e.data = listener.data || null;
+
+                    if (listener.data) {
+                        e.data = mixin({}, listener.data, e.data);
                     }
+                    if (args.length == 2 && isPlainObject(args[1])) {
+                        e.data = e.data || {};
+                        mixin(e.data,args[1]);
+                    }
+
                     listener.fn.apply(listener.ctx, args);
                     if (listener.one) {
                         listeners[i] = null;
