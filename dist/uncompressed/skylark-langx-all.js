@@ -2163,7 +2163,7 @@ define('skylark-langx-funcs/defer',[
                     return cancelAnimationFrame(id);
                 };
             } else {
-                id = setTimeoutout(fn1,trigger);
+                id = setTimeout(fn1,trigger);
                 ret.cancel = function() {
                     return clearTimeout(id);
                 };
