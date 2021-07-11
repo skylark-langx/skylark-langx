@@ -3382,6 +3382,7 @@ define('skylark-langx-events/Listener',[
     var slice = Array.prototype.slice,
         compact = arrays.compact,
         isDefined = types.isDefined,
+        isUndefined = types.isUndefined,
         isPlainObject = types.isPlainObject,
         isFunction = types.isFunction,
         isBoolean = types.isBoolean,
@@ -3393,14 +3394,22 @@ define('skylark-langx-events/Listener',[
 
     var Listener = klass({
 
-        listenTo: function(obj, event, callback, /*used internally*/ one) {
+        listenTo: function(obj, event, selector,callback, /*used internally*/ one) {
             if (!obj) {
                 return this;
             }
 
             if (isBoolean(callback)) {
                 one = callback;
-                callback = null;
+                callback = selector;
+                selector = null;
+            } else if (isBoolean(selector)) {
+                one = selector;
+                callback = selector = null;
+            } else if (isUndefined(callback)){
+                one = false;
+                callback = selector;
+                selector = null;
             }
 
             if (types.isPlainObject(event)){
@@ -3422,9 +3431,17 @@ define('skylark-langx-events/Listener',[
             }
 
             if (one) {
-                obj.one(event, callback, this);
+                if (selector) {
+                    obj.one(event, selector,callback, this);
+                } else {
+                    obj.one(event, callback, this);
+                }
             } else {
-                obj.on(event, callback, this);
+                 if (selector) {
+                    obj.on(event, selector, callback, this);
+                } else {
+                    obj.on(event, callback, this);
+                }
             }
 
             //keep track of them on listening.
@@ -3454,8 +3471,8 @@ define('skylark-langx-events/Listener',[
             return this;
         },
 
-        listenToOnce: function(obj, event, callback) {
-            return this.listenTo(obj, event, callback, 1);
+        listenToOnce: function(obj, event,selector, callback) {
+            return this.listenTo(obj, event,selector, callback, 1);
         },
 
         unlistenTo: function(obj, event, callback) {
