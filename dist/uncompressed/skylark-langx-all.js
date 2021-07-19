@@ -773,7 +773,8 @@ define('skylark-langx-objects/_parse_mixin_args',[
     "./objects"
 ],function(types,objects) {
 
-    var isBoolean = types.isBoolean;
+    var slice = Array.prototype.slice,
+        isBoolean = types.isBoolean;
 
     function _parseMixinArgs(args) {
         var params = slice.call(arguments, 0),
@@ -817,6 +818,7 @@ define('skylark-langx-objects/extend',[
     "./objects",
     "./mixin"
 ],function(objects,mixin) {
+    var slice = Array.prototype.slice;
 
     function extend(target) {
         var deep, args = slice.call(arguments, 1);
@@ -2480,8 +2482,8 @@ define('skylark-langx-funcs/template',[
   "./funcs",
   "./proxy"
 ],function(objects,funcs,proxy){
+    //ref : underscore
     var slice = Array.prototype.slice;
-
    
     // By default, Underscore uses ERB-style template delimiters, change the
     // following template settings to use alternative delimiters.
@@ -2592,6 +2594,25 @@ define('skylark-langx-funcs/throttle',[
         };
         return throttled;
     };
+
+    /*
+    function throttle(func, delay) {
+        var timer = null;
+
+        return function() {
+            var context = this,
+                args = arguments;
+
+            if ( timer === null ) {
+                timer = setTimeout(function() {
+                    func.apply(context, args);
+                    timer = null;
+                }, delay);
+            }
+        };
+    }
+    */
+
 
     return funcs.throttle = throttle;
 });
@@ -3668,6 +3689,10 @@ define('skylark-langx-events/Emitter',[
         };
     }
 
+    
+    var queues  = new Map();
+
+
     var Emitter = Listener.inherit({
         _prepareArgs : function(e,args) {
             if (isDefined(args)) {
@@ -3799,6 +3824,26 @@ define('skylark-langx-events/Emitter',[
             return this;
         },
 
+        queueEmit : function (event) {
+            const type = event.type || event;
+            let map = queues.get(this);
+            if (!map) {
+                map = new Map();
+                queues.set(this, map);
+            }
+            const oldTimeout = map.get(type);
+            map.delete(type);
+            window.clearTimeout(oldTimeout);
+            const timeout = window.setTimeout(() => {
+                if (map.size === 0) {
+                    map = null;
+                    queues.delete(this);
+                }
+                this.trigger(event);
+            }, 0);
+            map.set(type, timeout);
+        },
+
         listened: function(event) {
             var evtArr = ((this._hub || (this._events = {}))[event] || []);
             return evtArr.length > 0;
@@ -3850,9 +3895,15 @@ define('skylark-langx-events/Emitter',[
 
             return this;
         },
+
         trigger  : function() {
             return this.emit.apply(this,arguments);
+        },
+
+        queueTrigger : function (event) {
+            return this.queueEmit.apply(this,arguments);
         }
+
     });
 
 
