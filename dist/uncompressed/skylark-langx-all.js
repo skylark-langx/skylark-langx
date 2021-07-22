@@ -3541,7 +3541,17 @@ define('skylark-langx-events/Listener',[
                 //listenTo(obj,callbacks,one)
                 var callbacks = event;
                 for (var name in callbacks) {
-                    this.listenTo(obj,name,callbacks[name],one);
+
+                    var match = name.match( /^([\w:-]*)\s*(.*)$/ );
+                    var name1 = match[ 1 ];
+                    var selector1 = match[ 2 ];
+
+                    if (selector1) {
+                        this.listenTo(obj,name1,selector1,callbacks[name],one);
+                    } else {
+                        this.listenTo(obj,name1,callbacks[name],one);
+                    }
+
                 }
                 return this;
             }
