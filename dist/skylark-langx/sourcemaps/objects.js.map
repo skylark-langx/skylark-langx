@@ -1,0 +1,1 @@
+{"version":3,"sources":["objects.js"],"names":["define","objects"],"mappings":";;;;;;;AAAAA,QACI,yBACF,SAASC,GACP,OAAOA","file":"../objects.js","sourcesContent":["define([\r\n    \"skylark-langx-objects\"\r\n],function(objects){\r\n    return objects;\r\n});"]}

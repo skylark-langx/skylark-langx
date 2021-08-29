@@ -1,0 +1,1 @@
+{"version":3,"sources":["constructs.js"],"names":["define","constructs"],"mappings":";;;;;;;AAAAA,QACC,4BACC,SAASC,GACT,OAAOA","file":"../constructs.js","sourcesContent":["define([\r\n\t\"skylark-langx-constructs\"\r\n],function(constructs){\r\n  return constructs;\r\n});"]}

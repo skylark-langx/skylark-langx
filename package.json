@@ -40,7 +40,8 @@
     "skylark-langx-objects": "git+https://github.com/skylark-langx/skylark-langx-objects.git",
     "skylark-langx-strings": "git+https://github.com/skylark-langx/skylark-langx-strings.git",
     "skylark-langx-topic": "git+https://github.com/skylark-langx/skylark-langx-topic.git",
-    "skylark-langx-types": "git+https://github.com/skylark-langx/skylark-langx-types.git"
+    "skylark-langx-types": "git+https://github.com/skylark-langx/skylark-langx-types.git",
+    "skylark-langx-urls": "git+https://github.com/skylark-langx/skylark-langx-urls.git"
   },
   "engines": {
     "node": ">=0.8.0"
