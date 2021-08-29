@@ -1,1 +1,0 @@
-{"version":3,"sources":["funcs.js"],"names":["define","funcs"],"mappings":";;;;;;;AAAAA,QACI,uBACF,SAASC,GACP,OAAOA","file":"../funcs.js","sourcesContent":["define([\r\n    \"skylark-langx-funcs\"\r\n],function(funcs){\r\n    return funcs;\r\n});"]}

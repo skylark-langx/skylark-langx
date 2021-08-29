@@ -1,1 +1,0 @@
-{"version":3,"sources":["arrays.js"],"names":["define","arrays"],"mappings":";;;;;;;AAAAA,QACC,wBACC,SAASC,GACT,OAAOA","file":"../arrays.js","sourcesContent":["define([\r\n\t\"skylark-langx-arrays\"\r\n],function(arrays){\r\n  return arrays;\r\n});"]}
