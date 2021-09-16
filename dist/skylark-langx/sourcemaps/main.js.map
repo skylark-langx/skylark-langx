@@ -1,1 +1,0 @@
-{"version":3,"sources":["main.js"],"names":["define","langx"],"mappings":";;;;;;;AAAAA,QACI,WACD,SAASC,GACR,OAAOA","file":"../main.js","sourcesContent":["define([\r\n    \"./langx\"\r\n], function(langx) {\r\n    return langx;\r\n});\r\n"]}

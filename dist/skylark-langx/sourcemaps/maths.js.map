@@ -1,1 +1,0 @@
-{"version":3,"sources":["maths.js"],"names":["define","maths"],"mappings":";;;;;;;AAAAA,QACI,uBACF,SAASC,GACP,OAAOA","file":"../maths.js","sourcesContent":["define([\r\n    \"skylark-langx-maths\"\r\n],function(maths){\r\n    return maths;\r\n});"]}

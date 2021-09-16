@@ -1,1 +1,0 @@
-{"version":3,"sources":["evented.js"],"names":["define","Emitter"],"mappings":";;;;;;;AAAAA,QACI,aACF,SAASC,GACP,OAAOA","file":"../evented.js","sourcesContent":["define([\r\n    \"./emitter\"\r\n],function(Emitter){\r\n    return Emitter;\r\n})"]}

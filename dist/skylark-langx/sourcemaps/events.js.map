@@ -1,1 +1,0 @@
-{"version":3,"sources":["events.js"],"names":["define","events"],"mappings":";;;;;;;AAAAA,QACC,wBACC,SAASC,GACV,OAAOA","file":"../events.js","sourcesContent":["define([\r\n\t\"skylark-langx-events\"\r\n],function(events){\r\n\treturn events;\r\n})"]}

@@ -1,1 +1,0 @@
-{"version":3,"sources":["emitter.js"],"names":["define","events","Emitter"],"mappings":";;;;;;;AAAAA,QACI,wBACF,SAASC,GACP,OAAOA,EAAOC","file":"../emitter.js","sourcesContent":["define([\r\n    \"skylark-langx-events\"\r\n],function(events){\r\n    return events.Emitter;\r\n})"]}

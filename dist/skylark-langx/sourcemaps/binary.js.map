@@ -1,1 +1,0 @@
-{"version":3,"sources":["binary.js"],"names":["define","binary"],"mappings":";;;;;;;AAAAA,QACC,wBACC,SAASC,GACT,OAAOA","file":"../binary.js","sourcesContent":["define([\r\n\t\"skylark-langx-binary\"\r\n],function(binary){\r\n  return binary;\r\n});"]}

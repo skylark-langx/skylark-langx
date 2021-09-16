@@ -1,1 +1,0 @@
-{"version":3,"sources":["globals.js"],"names":["define","globals"],"mappings":";;;;;;;AAAAA,QACI,yBACF,SAASC,GACP,OAAOA","file":"../globals.js","sourcesContent":["define([\r\n    \"skylark-langx-globals\"\r\n],function(globals){\r\n    return globals;\r\n});"]}
