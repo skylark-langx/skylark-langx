@@ -1,0 +1,1 @@
+{"version":3,"sources":["numerics.js"],"names":["define","numerics"],"mappings":";;;;;;;AAAAA,QACC,0BACC,SAASC,GACV,OAAOA","file":"../numerics.js","sourcesContent":["define([\r\n\t\"skylark-langx-numerics\"\r\n],function(numerics){\r\n\treturn numerics;\r\n});"]}

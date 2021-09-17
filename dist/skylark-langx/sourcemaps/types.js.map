@@ -1,0 +1,1 @@
+{"version":3,"sources":["types.js"],"names":["define","types"],"mappings":";;;;;;;AAAAA,QACI,uBACF,SAASC,GACP,OAAOA","file":"../types.js","sourcesContent":["define([\r\n    \"skylark-langx-types\"\r\n],function(types){\r\n    return types;\r\n});"]}

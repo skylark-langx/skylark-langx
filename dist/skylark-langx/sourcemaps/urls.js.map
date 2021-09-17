@@ -1,0 +1,1 @@
+{"version":3,"sources":["urls.js"],"names":["define","urls"],"mappings":";;;;;;;AAAAA,QACC,sBACC,SAASC,GACV,OAAOA","file":"../urls.js","sourcesContent":["define([\r\n\t\"skylark-langx-urls\"\r\n],function(urls){\r\n\treturn urls;\r\n});"]}

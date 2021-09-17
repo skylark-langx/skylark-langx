@@ -1,0 +1,1 @@
+{"version":3,"sources":["strings.js"],"names":["define","strings"],"mappings":";;;;;;;AAAAA,QACI,yBACF,SAASC,GACP,OAAOA","file":"../strings.js","sourcesContent":["define([\r\n    \"skylark-langx-strings\"\r\n],function(strings){\r\n    return strings;\r\n});"]}

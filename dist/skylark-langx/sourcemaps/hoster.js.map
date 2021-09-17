@@ -1,0 +1,1 @@
+{"version":3,"sources":["hoster.js"],"names":["define","hoster"],"mappings":";;;;;;;AAAAA,QACC,wBACC,SAASC,GACV,OAAOA","file":"../hoster.js","sourcesContent":["define([\r\n\t\"skylark-langx-hoster\"\r\n],function(hoster){\r\n\treturn hoster;\r\n});"]}
