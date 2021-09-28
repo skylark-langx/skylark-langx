@@ -1698,13 +1698,21 @@ let longEar = klass({
 
     return constructs.klass = createClass;
 });
+define('skylark-langx-constructs/main',[
+	"./constructs",
+	"./inherit",
+	"./klass"
+],function(constructs){
+	return constructs;
+});
+define('skylark-langx-constructs', ['skylark-langx-constructs/main'], function (main) { return main; });
+
 define('skylark-langx-klass/klass',[
   "skylark-langx-ns",
-  "skylark-langx-constructs/klass"
-],function(skylark,klass){
+  "skylark-langx-constructs"
+],function(skylark,constructs){
 
-
-    return skylark.attach("langx.klass",klass);
+    return skylark.attach("langx.klass",constructs.klass);
 });
 define('skylark-langx-klass/main',[
 	"./klass"
@@ -3103,15 +3111,6 @@ define('skylark-langx/binary',[
 ],function(binary){
   return binary;
 });
-define('skylark-langx-constructs/main',[
-	"./constructs",
-	"./inherit",
-	"./klass"
-],function(constructs){
-	return constructs;
-});
-define('skylark-langx-constructs', ['skylark-langx-constructs/main'], function (main) { return main; });
-
 define('skylark-langx/constructs',[
 	"skylark-langx-constructs"
 ],function(constructs){
@@ -10082,8 +10081,7 @@ define('skylark-langx/Evented',[
     return Emitter;
 });
 define('skylark-langx-strings/strings',[
-    "skylark-langx-ns"
-],function(skylark){
+],function(){
     // add default escape function for escaping HTML entities
     var escapeCharMap = Object.freeze({
         '&': '&amp;',
@@ -10346,7 +10344,7 @@ define('skylark-langx-strings/strings',[
         return str;
     }
 
-	return skylark.attach("langx.strings",{
+    return {
         camelCase: function(str) {
             return str.replace(/-([\da-z])/g, function(a) {
                 return a.toUpperCase().replace('-', '');
@@ -10389,7 +10387,7 @@ define('skylark-langx-strings/strings',[
         upperFirst: function(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
-	}) ; 
+    }; 
 
 });
 define('skylark-langx-strings/base64',[
@@ -11071,15 +11069,15 @@ define('skylark-langx-urls/is_same_origin',[
 
 define('skylark-langx-urls/path',[
     "skylark-langx-types",
-    "skylark-langx-constructs/klass",
+    "skylark-langx-constructs",
     "./urls"
-], function(types,klass,urls) {
+], function(types,constructs,urls) {
 
     /**
      * @class Path
      * @constructor
      */
-    var Path =   klass({
+    var Path =   constructs.klass({
         _construct : function() {
             var _ = this._ = {
                 segments : null,
