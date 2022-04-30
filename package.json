@@ -22,6 +22,11 @@
   "author": "Hudaokeji Co.,Ltd",
   "license": "MIT",
   "bugs": "https://github.com/skylarkjs/skylark-langx/issues",
+  "files": [
+    "dist/",
+    "skins/",
+    "index.js"
+  ],
   "dependencies": {
     "skylark-langx-arrays": "git+https://github.com/skylark-langx/skylark-langx-arrays.git",
     "skylark-langx-aspect": "git+https://github.com/skylark-langx/skylark-langx-aspect.git",
