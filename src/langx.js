@@ -92,9 +92,11 @@ define([
         return obj._uid || (obj._uid = _uid++);
     }
 
-    function langx() {
-        return langx;
-    }
+    //function langx() {
+    //    return langx;
+    //}
+
+    var langx  = skylark.attach("langx");
 
     mixin(langx, {
         createEvent : Emitter.createEvent,
@@ -132,5 +134,5 @@ define([
         topic : topic
     });
 
-    return skylark.langx = langx;
+    return langx;
 });
