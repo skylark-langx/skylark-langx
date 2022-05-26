@@ -32,6 +32,7 @@
     "skylark-langx-aspect": "git+https://github.com/skylark-langx/skylark-langx-aspect.git",
     "skylark-langx-async": "git+https://github.com/skylark-langx/skylark-langx-async.git",
     "skylark-langx-binary": "git+https://github.com/skylark-langx/skylark-langx-binary.git",
+    "skylark-langx-chars": "git+https://github.com/skylark-langx/skylark-langx-binary.git",
     "skylark-langx-constructs": "git+https://github.com/skylark-langx/skylark-langx-constructs.git",
     "skylark-langx-datetimes": "git+https://github.com/skylark-langx/skylark-langx-datetimes.git",
     "skylark-langx-events": "git+https://github.com/skylark-langx/skylark-langx-events.git",
@@ -43,7 +44,8 @@
     "skylark-langx-ns": "git+https://github.com/skylark-langx/skylark-langx-ns.git",
     "skylark-langx-numerics": "git+https://github.com/skylark-langx/skylark-langx-numerics.git",
     "skylark-langx-objects": "git+https://github.com/skylark-langx/skylark-langx-objects.git",
-    "skylark-langx-strings": "git+https://github.com/skylark-langx/skylark-langx-strings.git",
+    "skylark-langx-paths": "git+https://github.com/skylark-langx/skylark-langx-paths.git",
+   "skylark-langx-strings": "git+https://github.com/skylark-langx/skylark-langx-strings.git",
     "skylark-langx-topic": "git+https://github.com/skylark-langx/skylark-langx-topic.git",
     "skylark-langx-types": "git+https://github.com/skylark-langx/skylark-langx-types.git",
     "skylark-langx-urls": "git+https://github.com/skylark-langx/skylark-langx-urls.git"

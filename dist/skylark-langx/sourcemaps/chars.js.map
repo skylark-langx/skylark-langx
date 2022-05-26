@@ -1,0 +1,1 @@
+{"version":3,"sources":["chars.js"],"names":["define","chars"],"mappings":";;;;;;;AAAAA,QACC,uBACC,SAASC,GACT,OAAOA","file":"../chars.js","sourcesContent":["define([\r\n\t\"skylark-langx-chars\"\r\n],function(chars){\r\n  return chars;\r\n});"]}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["paths.js"],"names":["define","paths"],"mappings":";;;;;;;AAAAA,QACC,uBACC,SAASC,GACT,OAAOA","file":"../paths.js","sourcesContent":["define([\r\n\t\"skylark-langx-paths\"\r\n],function(paths){\r\n  return paths;\r\n});"]}
