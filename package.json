@@ -32,7 +32,7 @@
     "skylark-langx-aspect": "git+https://github.com/skylark-langx/skylark-langx-aspect.git",
     "skylark-langx-async": "git+https://github.com/skylark-langx/skylark-langx-async.git",
     "skylark-langx-binary": "git+https://github.com/skylark-langx/skylark-langx-binary.git",
-    "skylark-langx-chars": "git+https://github.com/skylark-langx/skylark-langx-binary.git",
+    "skylark-langx-chars": "git+https://github.com/skylark-langx/skylark-langx-chars.git",
     "skylark-langx-constructs": "git+https://github.com/skylark-langx/skylark-langx-constructs.git",
     "skylark-langx-datetimes": "git+https://github.com/skylark-langx/skylark-langx-datetimes.git",
     "skylark-langx-events": "git+https://github.com/skylark-langx/skylark-langx-events.git",

@@ -5,6 +5,7 @@ define([
     "./aspect",
     "./async",
     "./binary",
+    "./chars",
     "./constructs",
     "./datetimes",
     "./deferred",
@@ -18,6 +19,7 @@ define([
     "./maths",
     "./numerics",
     "./objects",
+    "./paths",
     "./stateful",
     "./strings",
     "./topic",
@@ -30,6 +32,7 @@ define([
     aspect,
     async,
     binary,
+    chars,
     constructs,
     datetimes,
     Deferred,
@@ -43,6 +46,7 @@ define([
     maths,
     numerics,
     objects,
+    paths,
     Stateful,
     strings,
     topic,
@@ -95,8 +99,7 @@ define([
     //function langx() {
     //    return langx;
     //}
-
-    var langx  = skylark.attach("langx");
+    var langx = skylark.attach("langx");
 
     mixin(langx, {
         createEvent : Emitter.createEvent,
@@ -133,6 +136,7 @@ define([
 
         topic : topic
     });
+
 
     return langx;
 });
