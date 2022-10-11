@@ -3317,7 +3317,7 @@ define('skylark-langx-async/async',[
 ],function(skylark){
 	return skylark.attach("langx.async");	
 });
-define('skylark-langx-async/deferred',[
+define([
     "skylark-langx-arrays",
 	"skylark-langx-funcs",
     "skylark-langx-objects",
@@ -3344,7 +3344,303 @@ define('skylark-langx-async/deferred',[
             }
             return this;
         },
+        fail : function(handler) { define([
+    "skylark-langx-arrays",
+    "skylark-langx-funcs",
+    "skylark-langx-objects"
+],function(arrays,funcs,objects){
+    "use strict";
+
+    var slice = Array.prototype.slice,
+        proxy = funcs.proxy,
+        makeArray = arrays.makeArray,
+        result = objects.result,
+        mixin = objects.mixin;
+
+    mixin(Promise.prototype,{
+        always: function(handler) {
+            //this.done(handler);
+            //this.fail(handler);
+            this.then(handler,handler);
+            return this;
+        },
+        done : function() {
+            for (var i = 0;i<arguments.length;i++) {
+                this.then(arguments[i]);
+            }
+            return this;
+        },
         fail : function(handler) { 
+            //return mixin(Promise.prototype.catch.call(this,handler),added);
+            //return this.then(null,handler);
+            this.catch(handler);
+            return this;
+         }
+    });
+
+
+    var Deferred = function() {
+        var self = this,
+            p = this.promise = makePromise2(new Promise(function(resolve, reject) {
+                self._resolve = resolve;
+                self._reject = reject;
+            }));
+
+        //wrapPromise(p,self);
+
+        //this[PGLISTENERS] = [];
+        //this[PGNOTIFIES] = [];
+
+        //this.resolve = Deferred.prototype.resolve.bind(this);
+        //this.reject = Deferred.prototype.reject.bind(this);
+        //this.progress = Deferred.prototype.progress.bind(this);
+
+    };
+
+   
+    function makePromise2(promise) {
+        // Don't modify any promise that has been already modified.
+        if (promise.isResolved) return promise;
+
+        // Set initial state
+        var isPending = true;
+        var isRejected = false;
+        var isResolved = false;
+
+        // Observe the promise, saving the fulfillment in a closure scope.
+        var result = promise.then(
+            function(v) {
+                isResolved = true;
+                isPending = false;
+                return v; 
+            }, 
+            function(e) {
+                isRejected = true;
+                isPending = false;
+                throw e; 
+            }
+        );
+
+        result.isResolved = function() { return isResolved; };
+        result.isPending = function() { return isPending; };
+        result.isRejected = function() { return isRejected; };
+
+        result.state = function() {
+            if (isResolved) {
+                return 'resolved';
+            }
+            if (isRejected) {
+                return 'rejected';
+            }
+            return 'pending';
+        };
+
+        var notified = [],
+            listeners = [];
+
+          
+        result.then = function(onResolved,onRejected,onProgress) {
+            if (onProgress) {
+                this.progress(onProgress);
+            }
+            return makePromise2(Promise.prototype.then.call(this,
+                onResolved && function(args) {
+                    if (args && args.__ctx__ !== undefined) {
+                        return onResolved.apply(args.__ctx__,args);
+                    } else {
+                        return onResolved(args);
+                    }
+                },
+                onRejected && function(args){
+                    if (args && args.__ctx__ !== undefined) {
+                        return onRejected.apply(args.__ctx__,args);
+                    } else {
+                        return onRejected(args);
+                    }
+                }
+            ));
+        };
+
+        result.progress = function(handler) {
+            notified.forEach(function (value) {
+                handler(value);
+            });
+            listeners.push(handler);
+            return this;
+        };
+
+        result.pipe = result.then;
+
+        result.notify = function(value) {
+            try {
+                notified.push(value);
+
+                return listeners.forEach(function (listener) {
+                    return listener(value);
+                });
+            } catch (error) {
+            this.reject(error);
+            }
+            return this;
+        };
+
+        result.notifyWith = function(ctx,value) {
+            try {
+                notified.push(value);
+
+                return listeners.forEach(function (listener) {
+                    return listener.call(ctx,value);
+                });
+            } catch (error) {
+            this.reject(error);
+            }
+            return this;
+        };
+                return result;
+    }
+
+ 
+    Deferred.prototype.resolve = function(value) {
+        var args = slice.call(arguments);
+        return this.resolveWith(null,args);
+    };
+
+    Deferred.prototype.resolveWith = function(context,args) {
+        args = args ? makeArray(args) : []; 
+        args.__ctx__ = context;
+        this._resolve(args);
+        this._resolved = true;
+        return this;
+    };
+
+    Deferred.prototype.notify = function(value) {
+        var p = result(this,"promise");
+        p.notify(value);
+        return this;
+    };
+
+    Deferred.prototype.reject = function(reason) {
+        var args = slice.call(arguments);
+        return this.rejectWith(null,args);
+    };
+
+    Deferred.prototype.rejectWith = function(context,args) {
+        args = args ? makeArray(args) : []; 
+        args.__ctx__ = context;
+        this._reject(args);
+        this._rejected = true;
+        return this;
+    };
+
+    Deferred.prototype.isResolved = function() {
+        var p = result(this,"promise");
+        return p.isResolved();
+    };
+
+    Deferred.prototype.isRejected = function() {
+        var p = result(this,"promise");
+        return p.isRejected();
+    };
+
+    Deferred.prototype.state = function() {
+        var p = result(this,"promise");
+        return p.state();
+    };
+
+    Deferred.prototype.then = function(callback, errback, progback) {
+        var p = result(this,"promise");
+        return p.then(callback, errback, progback);
+    };
+
+    Deferred.prototype.progress = function(progback){
+        var p = result(this,"promise");
+        return p.progress(progback);
+    };
+   
+    Deferred.prototype.catch = function(errback) {
+        var p = result(this,"promise");
+        return p.catch(errback);
+    };
+
+
+    Deferred.prototype.always  = function() {
+        var p = result(this,"promise");
+        p.always.apply(p,arguments);
+        return this;
+    };
+
+    Deferred.prototype.done  = function() {
+        var p = result(this,"promise");
+        p.done.apply(p,arguments);
+        return this;
+    };
+
+    Deferred.prototype.fail = function(errback) {
+        var p = result(this,"promise");
+        p.fail(errback);
+        return this;
+    };
+
+
+    Deferred.all = function(array) {
+        //return wrapPromise(Promise.all(array));
+        var d = new Deferred();
+        Promise.all(array).then(d.resolve.bind(d),d.reject.bind(d));
+        return result(d,"promise");
+    };
+
+    Deferred.first = function(array) {
+        return makePromise2(Promise.race(array));
+    };
+
+
+    Deferred.when = function(valueOrPromise, callback, errback, progback) {
+        var receivedPromise = valueOrPromise && typeof valueOrPromise.then === "function";
+        var nativePromise = receivedPromise && valueOrPromise instanceof Promise;
+
+        if (!receivedPromise) {
+            if (arguments.length > 1) {
+                return callback ? callback(valueOrPromise) : valueOrPromise;
+            } else {
+                return new Deferred().resolve(valueOrPromise);
+            }
+        } else if (!nativePromise) {
+            var deferred = new Deferred(valueOrPromise.cancel);
+            valueOrPromise.then(proxy(deferred.resolve,deferred), proxy(deferred.reject,deferred), deferred.notify);
+            valueOrPromise = deferred.promise;
+        }
+
+        if (callback || errback || progback) {
+            return valueOrPromise.then(callback, errback, progback);
+        }
+        return valueOrPromise;
+    };
+
+    Deferred.reject = function(err) {
+        var d = new Deferred();
+        d.reject(err);
+        return d.promise;
+    };
+
+    Deferred.resolve = function(data) {
+        var d = new Deferred();
+        d.resolve.apply(d,arguments);
+        return d.promise;
+    };
+
+    Deferred.immediate = Deferred.resolve;
+
+
+    Deferred.promise = function(callback) {
+        var d = new Deferred();
+
+        callback(d.resolve.bind(d),d.reject.bind(d),d.progress.bind(d));
+
+        return d.promise;
+    };
+
+    return Deferred;
+});
             //return mixin(Promise.prototype.catch.call(this,handler),added);
             //return this.then(null,handler);
             this.catch(handler);
@@ -13178,6 +13474,76 @@ define('skylark-langx-strings/substitute',[
 
 	return strings.substitute = substitute;
 });
+define('skylark-langx-strings/template',[
+	"./strings"
+],function(strings){
+    /**
+     * https://github.com/cho45/micro-template.js
+     * (c) cho45 http://cho45.github.com/mit-license
+     */
+    function template (id, data) {
+
+        function include(name, args) {
+            var stash = {};
+            for (var key in template.context.stash) if (template.context.stash.hasOwnProperty(key)) {
+                stash[key] = template.context.stash[key];
+            }
+            if (args) for (var key in args) if (args.hasOwnProperty(key)) {
+                stash[key] = args[key];
+            }
+            var context = template.context;
+            context.ret += template(name, stash);
+            template.context = context;
+        }
+
+        function wrapper(name, fun) {
+            var current = template.context.ret;
+            template.context.ret = '';
+            fun.apply(template.context);
+            var content = template.context.ret;
+            var orig_content = template.context.stash.content;
+            template.context.stash.content = content;
+            template.context.ret = current + template(name, template.context.stash);
+            template.context.stash.content = orig_content;
+        }
+
+        var me = arguments.callee;
+        if (!me.cache[id]) me.cache[id] = (function () {
+            var name = id, string = /^[\w\-]+$/.test(id) ? me.get(id): (name = 'template(string)', id); // no warnings
+            var line = 1, body = (
+                "try { " +
+                    (me.variable ?  "var " + me.variable + " = this.stash;" : "with (this.stash) { ") +
+                        "this.ret += '"  +
+                        string.
+                            replace(/<%/g, '\x11').replace(/%>/g, '\x13'). // if you want other tag, just edit this line
+                            replace(/'(?![^\x11\x13]+?\x13)/g, '\\x27').
+                            replace(/^\s*|\s*$/g, '').
+                            replace(/\n|\r\n/g, function () { return "';\nthis.line = " + (++line) + "; this.ret += '\\n" }).
+                            replace(/\x11=raw(.+?)\x13/g, "' + ($1) + '").
+                            replace(/\x11=(.+?)\x13/g, "' + this.escapeHTML($1) + '").
+                            replace(/\x11(.+?)\x13/g, "'; $1; this.ret += '") +
+                    "'; " + (me.variable ? "" : "}") + "return this.ret;" +
+                "} catch (e) { throw 'TemplateError: ' + e + ' (on " + name + "' + ' line ' + this.line + ')'; } " +
+                "//@ sourceURL=" + name + "\n" // source map
+            ).replace(/this\.ret \+= '';/g, '');
+            var func = new Function(body);
+            var map  = { '&' : '&amp;', '<' : '&lt;', '>' : '&gt;', '\x22' : '&#x22;', '\x27' : '&#x27;' };
+            var escapeHTML = function (string) { return (''+string).replace(/[&<>\'\"]/g, function (_) { return map[_] }) };
+            return function (stash) { return func.call(me.context = { escapeHTML: escapeHTML, line: 1, ret : '', stash: stash }) };
+        })();
+        return data ? me.cache[id](data) : me.cache[id];
+    }
+
+    template.cache = {};
+    
+
+    template.get = function (id) {
+        return document.getElementById(id).innerHTML;
+    };
+
+	
+	return strings.template = template;
+});
 define('skylark-langx-strings/trim',[
 	"./strings"
 ],function(strings){
@@ -13353,6 +13719,7 @@ define('skylark-langx-strings/main',[
 	"./serialize-value",
 	"./slugify",
 	"./substitute",
+	"./template",
 	"./trim",
 	"./trim-null",
 	"./unique-id",
@@ -13997,9 +14364,11 @@ define('skylark-langx/langx',[
         return obj._uid || (obj._uid = _uid++);
     }
 
-    function langx() {
-        return langx;
-    }
+    //function langx() {
+    //    return langx;
+    //}
+
+    var langx  = skylark.attach("langx");
 
     mixin(langx, {
         createEvent : Emitter.createEvent,
@@ -14037,7 +14406,7 @@ define('skylark-langx/langx',[
         topic : topic
     });
 
-    return skylark.langx = langx;
+    return langx;
 });
 define('skylark-langx/main',[
     "./langx"
