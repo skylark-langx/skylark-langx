@@ -54,7 +54,8 @@
     "node": ">=0.8.0"
   },
   "exports": {
-    "./": "./dist/uncompressed/skylark-langx/"
+    ".": "./dist/uncompressed/skylark-langx/main.js",
+    "./*": "./dist/uncompressed/skylark-langx/*.js"
   },
   "skylarkjs": {
     "directories": {
