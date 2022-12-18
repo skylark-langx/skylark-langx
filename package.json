@@ -9,7 +9,7 @@
   "homepage": "www.skylarkjs.org",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/skylarkjs/skylark-langx.git"
+    "url": "https://github.com/skylarkjs/skylark-langx.git"
   },
   "keywords": [
     "skylark",
@@ -28,27 +28,27 @@
     "index.js"
   ],
   "dependencies": {
-    "skylark-langx-arrays": "git+https://github.com/skylark-langx/skylark-langx-arrays.git",
-    "skylark-langx-aspect": "git+https://github.com/skylark-langx/skylark-langx-aspect.git",
-    "skylark-langx-async": "git+https://github.com/skylark-langx/skylark-langx-async.git",
-    "skylark-langx-binary": "git+https://github.com/skylark-langx/skylark-langx-binary.git",
-    "skylark-langx-chars": "git+https://github.com/skylark-langx/skylark-langx-chars.git",
-    "skylark-langx-constructs": "git+https://github.com/skylark-langx/skylark-langx-constructs.git",
-    "skylark-langx-datetimes": "git+https://github.com/skylark-langx/skylark-langx-datetimes.git",
-    "skylark-langx-events": "git+https://github.com/skylark-langx/skylark-langx-events.git",
-    "skylark-langx-funcs": "git+https://github.com/skylark-langx/skylark-langx-funcs.git",
-    "skylark-langx-globals": "git+https://github.com/skylark-langx/skylark-langx-globals.git",
-    "skylark-langx-hoster": "git+https://github.com/skylark-langx/skylark-langx-hoster.git",
-    "skylark-langx-klass": "git+https://github.com/skylark-langx/skylark-langx-klass.git",
-    "skylark-langx-maths": "git+https://github.com/skylark-langx/skylark-langx-maths.git",
-    "skylark-langx-ns": "git+https://github.com/skylark-langx/skylark-langx-ns.git",
-    "skylark-langx-numerics": "git+https://github.com/skylark-langx/skylark-langx-numerics.git",
-    "skylark-langx-objects": "git+https://github.com/skylark-langx/skylark-langx-objects.git",
-    "skylark-langx-paths": "git+https://github.com/skylark-langx/skylark-langx-paths.git",
-   "skylark-langx-strings": "git+https://github.com/skylark-langx/skylark-langx-strings.git",
-    "skylark-langx-topic": "git+https://github.com/skylark-langx/skylark-langx-topic.git",
-    "skylark-langx-types": "git+https://github.com/skylark-langx/skylark-langx-types.git",
-    "skylark-langx-urls": "git+https://github.com/skylark-langx/skylark-langx-urls.git"
+    "skylark-langx-arrays": "https://github.com/skylark-langx/skylark-langx-arrays.git",
+    "skylark-langx-aspect": "https://github.com/skylark-langx/skylark-langx-aspect.git",
+    "skylark-langx-async": "https://github.com/skylark-langx/skylark-langx-async.git",
+    "skylark-langx-binary": "https://github.com/skylark-langx/skylark-langx-binary.git",
+    "skylark-langx-chars": "https://github.com/skylark-langx/skylark-langx-chars.git",
+    "skylark-langx-constructs": "https://github.com/skylark-langx/skylark-langx-constructs.git",
+    "skylark-langx-datetimes": "https://github.com/skylark-langx/skylark-langx-datetimes.git",
+    "skylark-langx-events": "https://github.com/skylark-langx/skylark-langx-events.git",
+    "skylark-langx-funcs": "https://github.com/skylark-langx/skylark-langx-funcs.git",
+    "skylark-langx-globals": "https://github.com/skylark-langx/skylark-langx-globals.git",
+    "skylark-langx-hoster": "https://github.com/skylark-langx/skylark-langx-hoster.git",
+    "skylark-langx-klass": "https://github.com/skylark-langx/skylark-langx-klass.git",
+    "skylark-langx-maths": "https://github.com/skylark-langx/skylark-langx-maths.git",
+    "skylark-langx-ns": "https://github.com/skylark-langx/skylark-langx-ns.git",
+    "skylark-langx-numerics": "https://github.com/skylark-langx/skylark-langx-numerics.git",
+    "skylark-langx-objects": "https://github.com/skylark-langx/skylark-langx-objects.git",
+    "skylark-langx-paths": "https://github.com/skylark-langx/skylark-langx-paths.git",
+   "skylark-langx-strings": "https://github.com/skylark-langx/skylark-langx-strings.git",
+    "skylark-langx-topic": "https://github.com/skylark-langx/skylark-langx-topic.git",
+    "skylark-langx-types": "https://github.com/skylark-langx/skylark-langx-types.git",
+    "skylark-langx-urls": "https://github.com/skylark-langx/skylark-langx-urls.git"
   },
   "engines": {
     "node": ">=0.8.0"
