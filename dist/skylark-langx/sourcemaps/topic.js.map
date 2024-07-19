@@ -1,1 +1,1 @@
-{"version":3,"sources":["topic.js"],"names":["define","topic"],"mappings":";;;;;;;AAAAA,QACC,uBACC,SAASC,GACV,OAAOA","file":"../topic.js","sourcesContent":["define([\r\n\t\"skylark-langx-topic\"\r\n],function(topic){\r\n\treturn topic;\r\n});"]}
+{"version":3,"sources":["topic.js"],"names":["define","topic"],"mappings":";;;;;;;AAAAA,OAAO,CACN,uBACC,SAASC,GACV,OAAOA,CACR,CAAC","file":"../topic.js","sourcesContent":["define([\r\n\t\"skylark-langx-topic\"\r\n],function(topic){\r\n\treturn topic;\r\n});"]}

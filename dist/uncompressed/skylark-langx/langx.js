@@ -102,7 +102,7 @@ define([
     var langx = skylark.attach("langx");
 
     mixin(langx, {
-        createEvent : Emitter.createEvent,
+        createEvent : events.createEvent,
 
         funcArg: funcArg,
 

@@ -5,10 +5,8 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-(function(factory,globals) {
-  var define = globals.define,
-      require = globals.require,
-      isAmd = (typeof define === 'function' && define.amd),
+(function(factory,globals,define,require) {
+  var isAmd = (typeof define === 'function' && define.amd),
       isCmd = (!isAmd && typeof exports !== 'undefined');
 
   if (!isAmd && !define) {
@@ -706,6 +704,8 @@ define('skylark-langx-types/types',[
 
         isHtmlNode: isHtmlNode,
 
+        isInstanceOf,
+
         isNaN : function (obj) {
             return isNaN(obj);
         },
@@ -785,6 +785,7 @@ define('skylark-langx-funcs/defer',[
         } else {
             var  id;
             if (trigger == 0 && requestAnimationFrame) {
+                //setImmediate
                 id = requestAnimationFrame(fn1);
                 ret.cancel = function() {
                     return cancelAnimationFrame(id);
@@ -2108,7 +2109,7 @@ define('skylark-langx-funcs/template',[
     var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
 
 
-    function template(text, data, settings) {
+    function template(text, settings) {
         var render;
         settings = objects.defaults({}, settings,templateSettings);
 
@@ -2154,9 +2155,10 @@ define('skylark-langx-funcs/template',[
           throw e;
         }
 
-        if (data) {
-          return render(data,this)
-        }
+        ///if (data) {
+        ///  return render(data,this)
+        ///}
+        
         var template = proxy(function(data) {
           return render.call(this, data,this);
         },this);
@@ -3317,9 +3319,9 @@ define('skylark-langx-async/async',[
 ],function(skylark){
 	return skylark.attach("langx.async");	
 });
-define([
+define('skylark-langx-async/deferred',[
     "skylark-langx-arrays",
-	"skylark-langx-funcs",
+    "skylark-langx-funcs",
     "skylark-langx-objects",
     "./async"
 ],function(arrays,funcs,objects,async){
@@ -3344,303 +3346,7 @@ define([
             }
             return this;
         },
-        fail : function(handler) { define([
-    "skylark-langx-arrays",
-    "skylark-langx-funcs",
-    "skylark-langx-objects"
-],function(arrays,funcs,objects){
-    "use strict";
-
-    var slice = Array.prototype.slice,
-        proxy = funcs.proxy,
-        makeArray = arrays.makeArray,
-        result = objects.result,
-        mixin = objects.mixin;
-
-    mixin(Promise.prototype,{
-        always: function(handler) {
-            //this.done(handler);
-            //this.fail(handler);
-            this.then(handler,handler);
-            return this;
-        },
-        done : function() {
-            for (var i = 0;i<arguments.length;i++) {
-                this.then(arguments[i]);
-            }
-            return this;
-        },
         fail : function(handler) { 
-            //return mixin(Promise.prototype.catch.call(this,handler),added);
-            //return this.then(null,handler);
-            this.catch(handler);
-            return this;
-         }
-    });
-
-
-    var Deferred = function() {
-        var self = this,
-            p = this.promise = makePromise2(new Promise(function(resolve, reject) {
-                self._resolve = resolve;
-                self._reject = reject;
-            }));
-
-        //wrapPromise(p,self);
-
-        //this[PGLISTENERS] = [];
-        //this[PGNOTIFIES] = [];
-
-        //this.resolve = Deferred.prototype.resolve.bind(this);
-        //this.reject = Deferred.prototype.reject.bind(this);
-        //this.progress = Deferred.prototype.progress.bind(this);
-
-    };
-
-   
-    function makePromise2(promise) {
-        // Don't modify any promise that has been already modified.
-        if (promise.isResolved) return promise;
-
-        // Set initial state
-        var isPending = true;
-        var isRejected = false;
-        var isResolved = false;
-
-        // Observe the promise, saving the fulfillment in a closure scope.
-        var result = promise.then(
-            function(v) {
-                isResolved = true;
-                isPending = false;
-                return v; 
-            }, 
-            function(e) {
-                isRejected = true;
-                isPending = false;
-                throw e; 
-            }
-        );
-
-        result.isResolved = function() { return isResolved; };
-        result.isPending = function() { return isPending; };
-        result.isRejected = function() { return isRejected; };
-
-        result.state = function() {
-            if (isResolved) {
-                return 'resolved';
-            }
-            if (isRejected) {
-                return 'rejected';
-            }
-            return 'pending';
-        };
-
-        var notified = [],
-            listeners = [];
-
-          
-        result.then = function(onResolved,onRejected,onProgress) {
-            if (onProgress) {
-                this.progress(onProgress);
-            }
-            return makePromise2(Promise.prototype.then.call(this,
-                onResolved && function(args) {
-                    if (args && args.__ctx__ !== undefined) {
-                        return onResolved.apply(args.__ctx__,args);
-                    } else {
-                        return onResolved(args);
-                    }
-                },
-                onRejected && function(args){
-                    if (args && args.__ctx__ !== undefined) {
-                        return onRejected.apply(args.__ctx__,args);
-                    } else {
-                        return onRejected(args);
-                    }
-                }
-            ));
-        };
-
-        result.progress = function(handler) {
-            notified.forEach(function (value) {
-                handler(value);
-            });
-            listeners.push(handler);
-            return this;
-        };
-
-        result.pipe = result.then;
-
-        result.notify = function(value) {
-            try {
-                notified.push(value);
-
-                return listeners.forEach(function (listener) {
-                    return listener(value);
-                });
-            } catch (error) {
-            this.reject(error);
-            }
-            return this;
-        };
-
-        result.notifyWith = function(ctx,value) {
-            try {
-                notified.push(value);
-
-                return listeners.forEach(function (listener) {
-                    return listener.call(ctx,value);
-                });
-            } catch (error) {
-            this.reject(error);
-            }
-            return this;
-        };
-                return result;
-    }
-
- 
-    Deferred.prototype.resolve = function(value) {
-        var args = slice.call(arguments);
-        return this.resolveWith(null,args);
-    };
-
-    Deferred.prototype.resolveWith = function(context,args) {
-        args = args ? makeArray(args) : []; 
-        args.__ctx__ = context;
-        this._resolve(args);
-        this._resolved = true;
-        return this;
-    };
-
-    Deferred.prototype.notify = function(value) {
-        var p = result(this,"promise");
-        p.notify(value);
-        return this;
-    };
-
-    Deferred.prototype.reject = function(reason) {
-        var args = slice.call(arguments);
-        return this.rejectWith(null,args);
-    };
-
-    Deferred.prototype.rejectWith = function(context,args) {
-        args = args ? makeArray(args) : []; 
-        args.__ctx__ = context;
-        this._reject(args);
-        this._rejected = true;
-        return this;
-    };
-
-    Deferred.prototype.isResolved = function() {
-        var p = result(this,"promise");
-        return p.isResolved();
-    };
-
-    Deferred.prototype.isRejected = function() {
-        var p = result(this,"promise");
-        return p.isRejected();
-    };
-
-    Deferred.prototype.state = function() {
-        var p = result(this,"promise");
-        return p.state();
-    };
-
-    Deferred.prototype.then = function(callback, errback, progback) {
-        var p = result(this,"promise");
-        return p.then(callback, errback, progback);
-    };
-
-    Deferred.prototype.progress = function(progback){
-        var p = result(this,"promise");
-        return p.progress(progback);
-    };
-   
-    Deferred.prototype.catch = function(errback) {
-        var p = result(this,"promise");
-        return p.catch(errback);
-    };
-
-
-    Deferred.prototype.always  = function() {
-        var p = result(this,"promise");
-        p.always.apply(p,arguments);
-        return this;
-    };
-
-    Deferred.prototype.done  = function() {
-        var p = result(this,"promise");
-        p.done.apply(p,arguments);
-        return this;
-    };
-
-    Deferred.prototype.fail = function(errback) {
-        var p = result(this,"promise");
-        p.fail(errback);
-        return this;
-    };
-
-
-    Deferred.all = function(array) {
-        //return wrapPromise(Promise.all(array));
-        var d = new Deferred();
-        Promise.all(array).then(d.resolve.bind(d),d.reject.bind(d));
-        return result(d,"promise");
-    };
-
-    Deferred.first = function(array) {
-        return makePromise2(Promise.race(array));
-    };
-
-
-    Deferred.when = function(valueOrPromise, callback, errback, progback) {
-        var receivedPromise = valueOrPromise && typeof valueOrPromise.then === "function";
-        var nativePromise = receivedPromise && valueOrPromise instanceof Promise;
-
-        if (!receivedPromise) {
-            if (arguments.length > 1) {
-                return callback ? callback(valueOrPromise) : valueOrPromise;
-            } else {
-                return new Deferred().resolve(valueOrPromise);
-            }
-        } else if (!nativePromise) {
-            var deferred = new Deferred(valueOrPromise.cancel);
-            valueOrPromise.then(proxy(deferred.resolve,deferred), proxy(deferred.reject,deferred), deferred.notify);
-            valueOrPromise = deferred.promise;
-        }
-
-        if (callback || errback || progback) {
-            return valueOrPromise.then(callback, errback, progback);
-        }
-        return valueOrPromise;
-    };
-
-    Deferred.reject = function(err) {
-        var d = new Deferred();
-        d.reject(err);
-        return d.promise;
-    };
-
-    Deferred.resolve = function(data) {
-        var d = new Deferred();
-        d.resolve.apply(d,arguments);
-        return d.promise;
-    };
-
-    Deferred.immediate = Deferred.resolve;
-
-
-    Deferred.promise = function(callback) {
-        var d = new Deferred();
-
-        callback(d.resolve.bind(d),d.reject.bind(d),d.progress.bind(d));
-
-        return d.promise;
-    };
-
-    return Deferred;
-});
             //return mixin(Promise.prototype.catch.call(this,handler),added);
             //return this.then(null,handler);
             this.catch(handler);
@@ -4366,7 +4072,7 @@ define('skylark-langx-binary/ieee754',[],function(){
   return exports;
 });
 
-define('skylark-langx-binary/buffer',[
+define('skylark-langx-binary/memory',[
   "./binary",
   "./base64",
   "./ieee754"
@@ -4382,13 +4088,13 @@ define('skylark-langx-binary/buffer',[
   'use strict'
 
 
-  Buffer.INSPECT_MAX_BYTES = 50
+  Memory.INSPECT_MAX_BYTES = 50
 
   var K_MAX_LENGTH = 0x7fffffff
-  Buffer.kMaxLength = K_MAX_LENGTH
+  Memory.kMaxLength = K_MAX_LENGTH
 
   /**
-   * If `Buffer.TYPED_ARRAY_SUPPORT`:
+   * If `Memory.TYPED_ARRAY_SUPPORT`:
    *   === true    Use Uint8Array implementation (fastest)
    *   === false   Print warning and recommend using `buffer` v4.x which has an Object
    *               implementation (most compatible, even IE6)
@@ -4401,9 +4107,9 @@ define('skylark-langx-binary/buffer',[
    * (See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438). IE 10 lacks support
    * for __proto__ and has a buggy typed array implementation.
    */
-  Buffer.TYPED_ARRAY_SUPPORT = typedArraySupport()
+  Memory.TYPED_ARRAY_SUPPORT = typedArraySupport()
 
-  if (!Buffer.TYPED_ARRAY_SUPPORT && typeof console !== 'undefined' &&
+  if (!Memory.TYPED_ARRAY_SUPPORT && typeof console !== 'undefined' &&
       typeof console.error === 'function') {
     console.error(
       'This browser lacks typed array (Uint8Array) support which is required by ' +
@@ -4422,45 +4128,45 @@ define('skylark-langx-binary/buffer',[
     }
   }
 
-  Object.defineProperty(Buffer.prototype, 'parent', {
+  Object.defineProperty(Memory.prototype, 'parent', {
     get: function () {
-      if (!(this instanceof Buffer)) {
+      if (!(this instanceof Memory)) {
         return undefined
       }
       return this.buffer
     }
   })
 
-  Object.defineProperty(Buffer.prototype, 'offset', {
+  Object.defineProperty(Memory.prototype, 'offset', {
     get: function () {
-      if (!(this instanceof Buffer)) {
+      if (!(this instanceof Memory)) {
         return undefined
       }
       return this.byteOffset
     }
   })
 
-  function createBuffer (length) {
+  function reserveMemory (length) {
     if (length > K_MAX_LENGTH) {
       throw new RangeError('Invalid typed array length')
     }
     // Return an augmented `Uint8Array` instance
     var buf = new Uint8Array(length)
-    buf.__proto__ = Buffer.prototype
+    buf.__proto__ = Memory.prototype
     return buf
   }
 
   /**
-   * The Buffer constructor returns instances of `Uint8Array` that have their
-   * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
-   * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+   * The Memory constructor returns instances of `Uint8Array` that have their
+   * prototype changed to `Memory.prototype`. Furthermore, `Memory` is a subclass of
+   * `Uint8Array`, so the returned instances will have all the node `Memory` methods
    * and the `Uint8Array` methods. Square bracket notation works as expected -- it
    * returns a single octet.
    *
    * The `Uint8Array` prototype remains unmodified.
    */
 
-  function Buffer (arg, encodingOrOffset, length) {
+  function Memory (arg, encodingOrOffset, length) {
     // Common case.
     if (typeof arg === 'number') {
       if (typeof encodingOrOffset === 'string') {
@@ -4475,8 +4181,8 @@ define('skylark-langx-binary/buffer',[
 
   // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
   if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) {
-    Object.defineProperty(Buffer, Symbol.species, {
+      Memory[Symbol.species] === Memory) {
+    Object.defineProperty(Memory, Symbol.species, {
       value: null,
       configurable: true,
       enumerable: false,
@@ -4484,7 +4190,7 @@ define('skylark-langx-binary/buffer',[
     })
   }
 
-  Buffer.poolSize = 8192 // not used by this implementation
+  Memory.poolSize = 8192 // not used by this implementation
 
   function from (value, encodingOrOffset, length) {
     if (typeof value === 'number') {
@@ -4503,21 +4209,21 @@ define('skylark-langx-binary/buffer',[
   }
 
   /**
-   * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+   * Functionally equivalent to Memory(arg, encoding) but throws a TypeError
    * if value is a number.
-   * Buffer.from(str[, encoding])
-   * Buffer.from(array)
-   * Buffer.from(buffer)
-   * Buffer.from(arrayBuffer[, byteOffset[, length]])
+   * Memory.from(str[, encoding])
+   * Memory.from(array)
+   * Memory.from(buffer)
+   * Memory.from(arrayBuffer[, byteOffset[, length]])
    **/
-  Buffer.from = function (value, encodingOrOffset, length) {
+  Memory.from = function (value, encodingOrOffset, length) {
     return from(value, encodingOrOffset, length)
   }
 
-  // Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
+  // Note: Change prototype *after* Memory.from is defined to workaround Chrome bug:
   // https://github.com/feross/buffer/pull/148
-  Buffer.prototype.__proto__ = Uint8Array.prototype
-  Buffer.__proto__ = Uint8Array
+  Memory.prototype.__proto__ = Uint8Array.prototype
+  Memory.__proto__ = Uint8Array
 
   function assertSize (size) {
     if (typeof size !== 'number') {
@@ -4530,42 +4236,42 @@ define('skylark-langx-binary/buffer',[
   function alloc (size, fill, encoding) {
     assertSize(size)
     if (size <= 0) {
-      return createBuffer(size)
+      return reserveMemory(size)
     }
     if (fill !== undefined) {
       // Only pay attention to encoding if it's a string. This
       // prevents accidentally sending in a number that would
       // be interpretted as a start offset.
       return typeof encoding === 'string'
-        ? createBuffer(size).fill(fill, encoding)
-        : createBuffer(size).fill(fill)
+        ? reserveMemory(size).fill(fill, encoding)
+        : reserveMemory(size).fill(fill)
     }
-    return createBuffer(size)
+    return reserveMemory(size)
   }
 
   /**
-   * Creates a new filled Buffer instance.
+   * Creates a new filled Memory instance.
    * alloc(size[, fill[, encoding]])
    **/
-  Buffer.alloc = function (size, fill, encoding) {
+  Memory.alloc = function (size, fill, encoding) {
     return alloc(size, fill, encoding)
   }
 
   function allocUnsafe (size) {
     assertSize(size)
-    return createBuffer(size < 0 ? 0 : checked(size) | 0)
+    return reserveMemory(size < 0 ? 0 : checked(size) | 0)
   }
 
   /**
-   * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+   * Equivalent to Memory(num), by default creates a non-zero-filled Memory instance.
    * */
-  Buffer.allocUnsafe = function (size) {
+  Memory.allocUnsafe = function (size) {
     return allocUnsafe(size)
   }
   /**
-   * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+   * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Memory instance.
    */
-  Buffer.allocUnsafeSlow = function (size) {
+  Memory.allocUnsafeSlow = function (size) {
     return allocUnsafe(size)
   }
 
@@ -4574,12 +4280,12 @@ define('skylark-langx-binary/buffer',[
       encoding = 'utf8'
     }
 
-    if (!Buffer.isEncoding(encoding)) {
+    if (!Memory.isEncoding(encoding)) {
       throw new TypeError('Unknown encoding: ' + encoding)
     }
 
     var length = byteLength(string, encoding) | 0
-    var buf = createBuffer(length)
+    var buf = reserveMemory(length)
 
     var actual = buf.write(string, encoding)
 
@@ -4595,7 +4301,7 @@ define('skylark-langx-binary/buffer',[
 
   function fromArrayLike (array) {
     var length = array.length < 0 ? 0 : checked(array.length) | 0
-    var buf = createBuffer(length)
+    var buf = reserveMemory(length)
     for (var i = 0; i < length; i += 1) {
       buf[i] = array[i] & 255
     }
@@ -4621,14 +4327,14 @@ define('skylark-langx-binary/buffer',[
     }
 
     // Return an augmented `Uint8Array` instance
-    buf.__proto__ = Buffer.prototype
+    buf.__proto__ = Memory.prototype
     return buf
   }
 
   function fromObject (obj) {
-    if (Buffer.isBuffer(obj)) {
+    if (Memory.isBuffer(obj)) {
       var len = checked(obj.length) | 0
-      var buf = createBuffer(len)
+      var buf = reserveMemory(len)
 
       if (buf.length === 0) {
         return buf
@@ -4641,24 +4347,24 @@ define('skylark-langx-binary/buffer',[
     if (obj) {
       if (ArrayBuffer.isView(obj) || 'length' in obj) {
         if (typeof obj.length !== 'number' || numberIsNaN(obj.length)) {
-          return createBuffer(0)
+          return reserveMemory(0)
         }
         return fromArrayLike(obj)
       }
 
-      if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+      if (obj.type === 'Memory' && Array.isArray(obj.data)) {
         return fromArrayLike(obj.data)
       }
     }
 
-    throw new TypeError('The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object.')
+    throw new TypeError('The first argument must be one of type string, Memory, ArrayBuffer, Array, or Array-like Object.')
   }
 
   function checked (length) {
     // Note: cannot use `length < K_MAX_LENGTH` here because that fails when
     // length is NaN (which is otherwise coerced to zero.)
     if (length >= K_MAX_LENGTH) {
-      throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+      throw new RangeError('Attempt to allocate Memory larger than maximum ' +
                            'size: 0x' + K_MAX_LENGTH.toString(16) + ' bytes')
     }
     return length | 0
@@ -4668,15 +4374,15 @@ define('skylark-langx-binary/buffer',[
     if (+length != length) { // eslint-disable-line eqeqeq
       length = 0
     }
-    return Buffer.alloc(+length)
+    return Memory.alloc(+length)
   }
 
-  Buffer.isBuffer = function isBuffer (b) {
+  Memory.isMemory = Memory.isBuffer = function isMemory (b) {
     return b != null && b._isBuffer === true
   }
 
-  Buffer.compare = function compare (a, b) {
-    if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+  Memory.compare = function compare (a, b) {
+    if (!Memory.isMemory(a) || !Memory.isMemory(b)) {
       throw new TypeError('Arguments must be Buffers')
     }
 
@@ -4698,7 +4404,7 @@ define('skylark-langx-binary/buffer',[
     return 0
   }
 
-  Buffer.isEncoding = function isEncoding (encoding) {
+  Memory.isEncoding = function isEncoding (encoding) {
     switch (String(encoding).toLowerCase()) {
       case 'hex':
       case 'utf8':
@@ -4717,13 +4423,13 @@ define('skylark-langx-binary/buffer',[
     }
   }
 
-  Buffer.concat = function concat (list, length) {
+  Memory.concat = function concat (list, length) {
     if (!Array.isArray(list)) {
       throw new TypeError('"list" argument must be an Array of Buffers')
     }
 
     if (list.length === 0) {
-      return Buffer.alloc(0)
+      return Memory.alloc(0)
     }
 
     var i
@@ -4734,14 +4440,14 @@ define('skylark-langx-binary/buffer',[
       }
     }
 
-    var buffer = Buffer.allocUnsafe(length)
+    var buffer = Memory.allocUnsafe(length)
     var pos = 0
     for (i = 0; i < list.length; ++i) {
       var buf = list[i]
       if (ArrayBuffer.isView(buf)) {
-        buf = Buffer.from(buf)
+        buf = Memory.from(buf)
       }
-      if (!Buffer.isBuffer(buf)) {
+      if (!Memory.isMemory(buf)) {
         throw new TypeError('"list" argument must be an Array of Buffers')
       }
       buf.copy(buffer, pos)
@@ -4751,7 +4457,7 @@ define('skylark-langx-binary/buffer',[
   }
 
   function byteLength (string, encoding) {
-    if (Buffer.isBuffer(string)) {
+    if (Memory.isMemory(string)) {
       return string.length
     }
     if (ArrayBuffer.isView(string) || isArrayBuffer(string)) {
@@ -4792,7 +4498,29 @@ define('skylark-langx-binary/buffer',[
       }
     }
   }
-  Buffer.byteLength = byteLength
+  Memory.byteLength = byteLength
+
+
+  /**
+   * Create arraybuffer from memory
+   *
+   * @method toArrayBuffer
+   * @param {Buffer} buffer
+   * @return {Arraybuffer} data
+   */
+  Memory.toArrayBuffer = function(memory) {
+    var array = new ArrayBuffer(memory.length);
+    var view = new Uint8Array(array);
+
+    for(var i = 0; i < memory.length; i++){
+      view[i] = memory[i];
+    }
+
+    return array;
+
+    //Faster but the results is failing the "instanceof ArrayBuffer" test
+    //return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+  }
 
   function slowToString (encoding, start, end) {
     var loweredCase = false
@@ -4864,13 +4592,9 @@ define('skylark-langx-binary/buffer',[
     }
   }
 
-  // This property is used by `Buffer.isBuffer` (and the `is-buffer` npm package)
-  // to detect a Buffer instance. It's not possible to use `instanceof Buffer`
-  // reliably in a browserify context because there could be multiple different
-  // copies of the 'buffer' package in use. This method works even for Buffer
-  // instances that were created from another copy of the `buffer` package.
-  // See: https://github.com/feross/buffer/issues/154
-  Buffer.prototype._isBuffer = true
+  // This property is used by `Memory.isMemory` 
+  // to detect a Memory instance. 
+  Memory.prototype._isMemory = true
 
   function swap (b, n, m) {
     var i = b[n]
@@ -4878,10 +4602,10 @@ define('skylark-langx-binary/buffer',[
     b[m] = i
   }
 
-  Buffer.prototype.swap16 = function swap16 () {
+  Memory.prototype.swap16 = function swap16 () {
     var len = this.length
     if (len % 2 !== 0) {
-      throw new RangeError('Buffer size must be a multiple of 16-bits')
+      throw new RangeError('Memory size must be a multiple of 16-bits')
     }
     for (var i = 0; i < len; i += 2) {
       swap(this, i, i + 1)
@@ -4889,10 +4613,10 @@ define('skylark-langx-binary/buffer',[
     return this
   }
 
-  Buffer.prototype.swap32 = function swap32 () {
+  Memory.prototype.swap32 = function swap32 () {
     var len = this.length
     if (len % 4 !== 0) {
-      throw new RangeError('Buffer size must be a multiple of 32-bits')
+      throw new RangeError('Memory size must be a multiple of 32-bits')
     }
     for (var i = 0; i < len; i += 4) {
       swap(this, i, i + 3)
@@ -4901,10 +4625,10 @@ define('skylark-langx-binary/buffer',[
     return this
   }
 
-  Buffer.prototype.swap64 = function swap64 () {
+  Memory.prototype.swap64 = function swap64 () {
     var len = this.length
     if (len % 8 !== 0) {
-      throw new RangeError('Buffer size must be a multiple of 64-bits')
+      throw new RangeError('Memory size must be a multiple of 64-bits')
     }
     for (var i = 0; i < len; i += 8) {
       swap(this, i, i + 7)
@@ -4915,34 +4639,34 @@ define('skylark-langx-binary/buffer',[
     return this
   }
 
-  Buffer.prototype.toString = function toString () {
+  Memory.prototype.toString = function toString () {
     var length = this.length
     if (length === 0) return ''
     if (arguments.length === 0) return utf8Slice(this, 0, length)
     return slowToString.apply(this, arguments)
   }
 
-  Buffer.prototype.toLocaleString = Buffer.prototype.toString
+  Memory.prototype.toLocaleString = Memory.prototype.toString
 
-  Buffer.prototype.equals = function equals (b) {
-    if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  Memory.prototype.equals = function equals (b) {
+    if (!Memory.isMemory(b)) throw new TypeError('Argument must be a Memory')
     if (this === b) return true
-    return Buffer.compare(this, b) === 0
+    return Memory.compare(this, b) === 0
   }
 
-  Buffer.prototype.inspect = function inspect () {
+  Memory.prototype.inspect = function inspect () {
     var str = ''
-    var max = Buffer.INSPECT_MAX_BYTES
+    var max = Memory.INSPECT_MAX_BYTES
     if (this.length > 0) {
       str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
       if (this.length > max) str += ' ... '
     }
-    return '<Buffer ' + str + '>'
+    return '<Memory ' + str + '>'
   }
 
-  Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-    if (!Buffer.isBuffer(target)) {
-      throw new TypeError('Argument must be a Buffer')
+  Memory.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+    if (!Memory.isMemory(target)) {
+      throw new TypeError('Argument must be a Memory')
     }
 
     if (start === undefined) {
@@ -5003,8 +4727,8 @@ define('skylark-langx-binary/buffer',[
   // OR the last index of `val` in `buffer` at offset <= `byteOffset`.
   //
   // Arguments:
-  // - buffer - a Buffer to search
-  // - val - a string, Buffer, or number
+  // - buffer - a Memory to search
+  // - val - a string, Memory, or number
   // - byteOffset - an index into `buffer`; will be clamped to an int32
   // - encoding - an optional encoding, relevant is val is a string
   // - dir - true for indexOf, false for lastIndexOf
@@ -5039,11 +4763,11 @@ define('skylark-langx-binary/buffer',[
 
     // Normalize val
     if (typeof val === 'string') {
-      val = Buffer.from(val, encoding)
+      val = Memory.from(val, encoding)
     }
 
     // Finally, search either indexOf (if dir is true) or lastIndexOf
-    if (Buffer.isBuffer(val)) {
+    if (Memory.isMemory(val)) {
       // Special case: looking for empty string/buffer always fails
       if (val.length === 0) {
         return -1
@@ -5061,7 +4785,7 @@ define('skylark-langx-binary/buffer',[
       return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
     }
 
-    throw new TypeError('val must be string, number or Buffer')
+    throw new TypeError('val must be string, number or Memory')
   }
 
   function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
@@ -5120,15 +4844,15 @@ define('skylark-langx-binary/buffer',[
     return -1
   }
 
-  Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  Memory.prototype.includes = function includes (val, byteOffset, encoding) {
     return this.indexOf(val, byteOffset, encoding) !== -1
   }
 
-  Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  Memory.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
     return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
   }
 
-  Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  Memory.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
     return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
   }
 
@@ -5177,18 +4901,18 @@ define('skylark-langx-binary/buffer',[
     return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
   }
 
-  Buffer.prototype.write = function write (string, offset, length, encoding) {
-    // Buffer#write(string)
+  Memory.prototype.write = function write (string, offset, length, encoding) {
+    // Memory#write(string)
     if (offset === undefined) {
       encoding = 'utf8'
       length = this.length
       offset = 0
-    // Buffer#write(string, encoding)
+    // Memory#write(string, encoding)
     } else if (length === undefined && typeof offset === 'string') {
       encoding = offset
       length = this.length
       offset = 0
-    // Buffer#write(string, offset[, length][, encoding])
+    // Memory#write(string, offset[, length][, encoding])
     } else if (isFinite(offset)) {
       offset = offset >>> 0
       if (isFinite(length)) {
@@ -5200,7 +4924,7 @@ define('skylark-langx-binary/buffer',[
       }
     } else {
       throw new Error(
-        'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+        'Memory.write(string, encoding, offset[, length]) is no longer supported'
       )
     }
 
@@ -5248,9 +4972,9 @@ define('skylark-langx-binary/buffer',[
     }
   }
 
-  Buffer.prototype.toJSON = function toJSON () {
+  Memory.prototype.toJSON = function toJSON () {
     return {
-      type: 'Buffer',
+      type: 'Memory',
       data: Array.prototype.slice.call(this._arr || this, 0)
     }
   }
@@ -5401,7 +5125,7 @@ define('skylark-langx-binary/buffer',[
     return res
   }
 
-  Buffer.prototype.slice = function slice (start, end) {
+  Memory.prototype.slice = function slice (start, end) {
     var len = this.length
     start = ~~start
     end = end === undefined ? len : ~~end
@@ -5424,7 +5148,7 @@ define('skylark-langx-binary/buffer',[
 
     var newBuf = this.subarray(start, end)
     // Return an augmented `Uint8Array` instance
-    newBuf.__proto__ = Buffer.prototype
+    newBuf.__proto__ = Memory.prototype
     return newBuf
   }
 
@@ -5436,7 +5160,7 @@ define('skylark-langx-binary/buffer',[
     if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
   }
 
-  Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  Memory.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
     offset = offset >>> 0
     byteLength = byteLength >>> 0
     if (!noAssert) checkOffset(offset, byteLength, this.length)
@@ -5451,7 +5175,7 @@ define('skylark-langx-binary/buffer',[
     return val
   }
 
-  Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  Memory.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
     offset = offset >>> 0
     byteLength = byteLength >>> 0
     if (!noAssert) {
@@ -5467,25 +5191,25 @@ define('skylark-langx-binary/buffer',[
     return val
   }
 
-  Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  Memory.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 1, this.length)
     return this[offset]
   }
 
-  Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  Memory.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 2, this.length)
     return this[offset] | (this[offset + 1] << 8)
   }
 
-  Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  Memory.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 2, this.length)
     return (this[offset] << 8) | this[offset + 1]
   }
 
-  Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  Memory.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
 
@@ -5495,7 +5219,7 @@ define('skylark-langx-binary/buffer',[
         (this[offset + 3] * 0x1000000)
   }
 
-  Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  Memory.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
 
@@ -5505,7 +5229,7 @@ define('skylark-langx-binary/buffer',[
       this[offset + 3])
   }
 
-  Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  Memory.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
     offset = offset >>> 0
     byteLength = byteLength >>> 0
     if (!noAssert) checkOffset(offset, byteLength, this.length)
@@ -5523,7 +5247,7 @@ define('skylark-langx-binary/buffer',[
     return val
   }
 
-  Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  Memory.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
     offset = offset >>> 0
     byteLength = byteLength >>> 0
     if (!noAssert) checkOffset(offset, byteLength, this.length)
@@ -5541,28 +5265,28 @@ define('skylark-langx-binary/buffer',[
     return val
   }
 
-  Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  Memory.prototype.readInt8 = function readInt8 (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 1, this.length)
     if (!(this[offset] & 0x80)) return (this[offset])
     return ((0xff - this[offset] + 1) * -1)
   }
 
-  Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  Memory.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 2, this.length)
     var val = this[offset] | (this[offset + 1] << 8)
     return (val & 0x8000) ? val | 0xFFFF0000 : val
   }
 
-  Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  Memory.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 2, this.length)
     var val = this[offset + 1] | (this[offset] << 8)
     return (val & 0x8000) ? val | 0xFFFF0000 : val
   }
 
-  Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  Memory.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
 
@@ -5572,7 +5296,7 @@ define('skylark-langx-binary/buffer',[
       (this[offset + 3] << 24)
   }
 
-  Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  Memory.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
 
@@ -5582,37 +5306,37 @@ define('skylark-langx-binary/buffer',[
       (this[offset + 3])
   }
 
-  Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  Memory.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
     return ieee754.read(this, offset, true, 23, 4)
   }
 
-  Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  Memory.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 4, this.length)
     return ieee754.read(this, offset, false, 23, 4)
   }
 
-  Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  Memory.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 8, this.length)
     return ieee754.read(this, offset, true, 52, 8)
   }
 
-  Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  Memory.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
     offset = offset >>> 0
     if (!noAssert) checkOffset(offset, 8, this.length)
     return ieee754.read(this, offset, false, 52, 8)
   }
 
   function checkInt (buf, value, offset, ext, max, min) {
-    if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+    if (!Memory.isMemory(buf)) throw new TypeError('"buffer" argument must be a Memory instance')
     if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
     if (offset + ext > buf.length) throw new RangeError('Index out of range')
   }
 
-  Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  Memory.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
     value = +value
     offset = offset >>> 0
     byteLength = byteLength >>> 0
@@ -5631,7 +5355,7 @@ define('skylark-langx-binary/buffer',[
     return offset + byteLength
   }
 
-  Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  Memory.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
     value = +value
     offset = offset >>> 0
     byteLength = byteLength >>> 0
@@ -5650,7 +5374,7 @@ define('skylark-langx-binary/buffer',[
     return offset + byteLength
   }
 
-  Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  Memory.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
@@ -5658,7 +5382,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 1
   }
 
-  Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  Memory.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
@@ -5667,7 +5391,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 2
   }
 
-  Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  Memory.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
@@ -5676,7 +5400,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 2
   }
 
-  Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  Memory.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
@@ -5687,7 +5411,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 4
   }
 
-  Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  Memory.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
@@ -5698,7 +5422,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 4
   }
 
-  Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  Memory.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) {
@@ -5721,7 +5445,7 @@ define('skylark-langx-binary/buffer',[
     return offset + byteLength
   }
 
-  Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  Memory.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) {
@@ -5744,7 +5468,7 @@ define('skylark-langx-binary/buffer',[
     return offset + byteLength
   }
 
-  Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  Memory.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
@@ -5753,7 +5477,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 1
   }
 
-  Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  Memory.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
@@ -5762,7 +5486,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 2
   }
 
-  Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  Memory.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
@@ -5771,7 +5495,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 2
   }
 
-  Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  Memory.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
@@ -5782,7 +5506,7 @@ define('skylark-langx-binary/buffer',[
     return offset + 4
   }
 
-  Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  Memory.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
     value = +value
     offset = offset >>> 0
     if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
@@ -5809,11 +5533,11 @@ define('skylark-langx-binary/buffer',[
     return offset + 4
   }
 
-  Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  Memory.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
     return writeFloat(this, value, offset, true, noAssert)
   }
 
-  Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  Memory.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
     return writeFloat(this, value, offset, false, noAssert)
   }
 
@@ -5827,17 +5551,17 @@ define('skylark-langx-binary/buffer',[
     return offset + 8
   }
 
-  Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  Memory.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
     return writeDouble(this, value, offset, true, noAssert)
   }
 
-  Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  Memory.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
     return writeDouble(this, value, offset, false, noAssert)
   }
 
   // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-  Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-    if (!Buffer.isBuffer(target)) throw new TypeError('argument should be a Buffer')
+  Memory.prototype.copy = function copy (target, targetStart, start, end) {
+    if (!Memory.isMemory(target)) throw new TypeError('argument should be a Memory')
     if (!start) start = 0
     if (!end && end !== 0) end = this.length
     if (targetStart >= target.length) targetStart = target.length
@@ -5886,7 +5610,7 @@ define('skylark-langx-binary/buffer',[
   //    buffer.fill(number[, offset[, end]])
   //    buffer.fill(buffer[, offset[, end]])
   //    buffer.fill(string[, offset[, end]][, encoding])
-  Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  Memory.prototype.fill = function fill (val, start, end, encoding) {
     // Handle string cases:
     if (typeof val === 'string') {
       if (typeof start === 'string') {
@@ -5900,7 +5624,7 @@ define('skylark-langx-binary/buffer',[
       if (encoding !== undefined && typeof encoding !== 'string') {
         throw new TypeError('encoding must be a string')
       }
-      if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      if (typeof encoding === 'string' && !Memory.isEncoding(encoding)) {
         throw new TypeError('Unknown encoding: ' + encoding)
       }
       if (val.length === 1) {
@@ -5935,9 +5659,9 @@ define('skylark-langx-binary/buffer',[
         this[i] = val
       }
     } else {
-      var bytes = Buffer.isBuffer(val)
+      var bytes = Memory.isMemory(val)
         ? val
-        : new Buffer(val, encoding)
+        : new Memory(val, encoding)
       var len = bytes.length
       if (len === 0) {
         throw new TypeError('The value "' + val +
@@ -6104,12 +5828,257 @@ define('skylark-langx-binary/buffer',[
     return obj !== obj // eslint-disable-line no-self-compare
   }
 
-  return binary.Buffer = Buffer;
+  return binary.Memory = Memory;
 
 });
+define('skylark-langx-binary/get-type-of',[
+    "./binary",
+    "./memory"
+],function(binary,Memory){
+     function getTypeOf(input) {
+        if (typeof input === 'string') {
+            return 'string';
+        }
+        if (Object.prototype.toString.call(input) === '[object Array]') {
+            return 'array';
+        }
+        if (Memory.isMemory(input)) {
+            return 'memory';
+        }
+        if (input instanceof Uint8Array) {
+            return 'uint8array';
+        }
+        if (input instanceof ArrayBuffer) {
+            return 'arraybuffer';
+        }
+    }
+	
+	return getTypeOf;	
+});
+define('skylark-langx-binary/arraylike-to-string',[
+  "./binary",
+  "./get-type-of"
+],function(binary,getTypeOf){
+
+    var arrayToStringHelper = {
+        stringifyByChunk: function (array, type, chunk) {
+            var result = [], k = 0, len = array.length;
+            if (len <= chunk) {
+                return String.fromCharCode.apply(null, array);
+            }
+            while (k < len) {
+                if (type === 'array' || type === 'nodebuffer') {
+                    result.push(String.fromCharCode.apply(null, array.slice(k, Math.min(k + chunk, len))));
+                } else {
+                    result.push(String.fromCharCode.apply(null, array.subarray(k, Math.min(k + chunk, len))));
+                }
+                k += chunk;
+            }
+            return result.join('');
+        },
+        stringifyByChar: function (array) {
+            var resultStr = '';
+            for (var i = 0; i < array.length; i++) {
+                resultStr += String.fromCharCode(array[i]);
+            }
+            return resultStr;
+        },
+        applyCanBeUsed: {
+            uint8array: function () {
+                try {
+                    return  String.fromCharCode.apply(null, new Uint8Array(1)).length === 1;
+                } catch (e) {
+                    return false;
+                }
+            }(),
+            nodebuffer: function () {
+                try {
+                ///    return support.nodebuffer && String.fromCharCode.apply(null, nodejsUtils.allocBuffer(1)).length === 1;
+                    return  String.fromCharCode.apply(null, Buffer.alloc(1)).length === 1;
+                } catch (e) {
+                    return false;
+                }
+            }()
+        }
+    };
+    function arrayLikeToString(array) {
+        var chunk = 65536, type = getTypeOf(array), canUseApply = true;
+        if (type === 'uint8array') {
+            canUseApply = arrayToStringHelper.applyCanBeUsed.uint8array;
+        } else if (type === 'memory') {
+            canUseApply = arrayToStringHelper.applyCanBeUsed.nodebuffer;
+        }
+        if (canUseApply) {
+            while (chunk > 1) {
+                try {
+                    return arrayToStringHelper.stringifyByChunk(array, type, chunk);
+                } catch (e) {
+                    chunk = Math.floor(chunk / 2);
+                }
+            }
+        }
+        return arrayToStringHelper.stringifyByChar(array);
+    }
+
+    return binary.arrayLikeToString = arrayLikeToString;
+});
+
+define('skylark-langx-binary/buffer',[
+  "./memory"
+],function(Memory){
+  return Memory;
+});
+define('skylark-langx-binary/string-to-arraylike',[
+  "./binary"
+],function(binary){
+
+    function stringToArrayLike(str, array) {
+        for (var i = 0; i < str.length; ++i) {
+            array[i] = str.charCodeAt(i) & 255;
+        }
+        return array;
+    }
+
+    return binary.stringToArrayLike = stringToArrayLike;
+});
+
+define('skylark-langx-binary/string-to-binary',[
+  "./binary",
+  "./string-to-arraylike"
+],function(binary,stringToArrayLike){
+    var support = {
+       uint8array : typeof Uint8Array !== "undefined"
+    };
+
+    function string2binary(str) {
+        var result = null;
+        if (support.uint8array) {
+            result = new Uint8Array(str.length);
+        } else {
+            result = new Array(str.length);
+        }
+        return stringToArrayLike(str, result);
+    }
+
+
+    return binary.string2binary = string2binary;
+});
+
+define('skylark-langx-binary/transform',[
+    "./binary",
+    "./memory",
+    "./get-type-of",
+    "./string-to-arraylike",
+    "./arraylike-to-string"
+],function(binary,Memory,getTypeOf,stringToArrayLike,arrayLikeToString){
+
+    function identity(input) {
+        return input;
+    }
+
+    function arrayLikeToArrayLike(arrayFrom, arrayTo) {
+        for (var i = 0; i < arrayFrom.length; i++) {
+            arrayTo[i] = arrayFrom[i];
+        }
+        return arrayTo;
+    }
+
+    var transform =  function (outputType, input) {
+        if (!input) {
+            input = '';
+        }
+        if (!outputType) {
+            return input;
+        }
+        var inputType = getTypeOf(input);
+        var result = transform[inputType][outputType](input);
+        return result;
+    };
+    transform['string'] = {
+        'string': identity,
+        'array': function (input) {
+            return stringToArrayLike(input, new Array(input.length));
+        },
+        'arraybuffer': function (input) {
+            return transform['string']['uint8array'](input).buffer;
+        },
+        'uint8array': function (input) {
+            return stringToArrayLike(input, new Uint8Array(input.length));
+        },
+        'memory': function (input) {
+            ///return stringToArrayLike(input, nodejsUtils.allocBuffer(input.length));
+            return stringToArrayLike(input, Buffer.alloc(input.length));
+        }
+    };
+    transform['array'] = {
+        'string': arrayLikeToString,
+        'array': identity,
+        'arraybuffer': function (input) {
+            return new Uint8Array(input).buffer;
+        },
+        'uint8array': function (input) {
+            return new Uint8Array(input);
+        },
+        'memory': function (input) {
+            ///return nodejsUtils.newBufferFrom(input);
+            return Memory.from(input);
+        }
+    };
+    transform['arraybuffer'] = {
+        'string': function (input) {
+            return arrayLikeToString(new Uint8Array(input));
+        },
+        'array': function (input) {
+            return arrayLikeToArrayLike(new Uint8Array(input), new Array(input.byteLength));
+        },
+        'arraybuffer': identity,
+        'uint8array': function (input) {
+            return new Uint8Array(input);
+        },
+        'memory': function (input) {
+            ///return nodejsUtils.newBufferFrom(new Uint8Array(input));
+            return Memory.from(new Uint8Array(input));
+        }
+    };
+    transform['uint8array'] = {
+        'string': arrayLikeToString,
+        'array': function (input) {
+            return arrayLikeToArrayLike(input, new Array(input.length));
+        },
+        'arraybuffer': function (input) {
+            return input.buffer;
+        },
+        'uint8array': identity,
+        'memory': function (input) {
+            ///return nodejsUtils.newBufferFrom(input);
+            return Memory.from(input);
+        }
+    };
+    transform['memory'] = {
+        'string': arrayLikeToString,
+        'array': function (input) {
+            return arrayLikeToArrayLike(input, new Array(input.length));
+        },
+        'arraybuffer': function (input) {
+            return transform['memory']['uint8array'](input).buffer;
+        },
+        'uint8array': function (input) {
+            return arrayLikeToArrayLike(input, new Uint8Array(input.length));
+        },
+        'memory': identity
+    };
+
+    return binary.transform = transform;
+});
+
 define('skylark-langx-binary/main',[
 	"./binary",
-	"./buffer"
+	"./arraylike-to-string",
+	"./buffer",
+	"./string-to-arraylike",
+	"./string-to-binary",
+	"./transform"
+
 ],function(binary){
 	return binary;
 });
@@ -14480,7 +14449,7 @@ define('skylark-langx-strings/substitute',[
 	return strings.substitute = substitute;
 });
 define('skylark-langx-strings/template',[
-	"./strings"
+    "./strings"
 ],function(strings){
     /**
      * https://github.com/cho45/micro-template.js
@@ -14644,7 +14613,7 @@ define('skylark-langx-strings/template',[
     };
 
 
-	return strings.template = template;
+    return strings.template = template;
 });
 define('skylark-langx-strings/trim',[
 	"./strings"
@@ -15476,7 +15445,7 @@ define('skylark-langx/langx',[
     var langx = skylark.attach("langx");
 
     mixin(langx, {
-        createEvent : Emitter.createEvent,
+        createEvent : events.createEvent,
 
         funcArg: funcArg,
 
@@ -15523,5 +15492,5 @@ define('skylark-langx/main',[
 define('skylark-langx', ['skylark-langx/main'], function (main) { return main; });
 
 
-},this);
+},this,define,require);
 //# sourceMappingURL=sourcemaps/skylark-langx-all.js.map
